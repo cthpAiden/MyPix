@@ -11,14 +11,25 @@ import { Button, Chip, Segmented } from '@/ui/primitives';
 import { CloseIcon, DownloadIcon, ShareIcon } from '@/ui/icons';
 import { ASPECT_RATIOS } from '@/shared/aspectRatios';
 import type { Engine } from '@/engine';
-import type { AspectRatioId } from '@/engine/editState';
+import type { AspectRatioId, BackgroundEffectParams } from '@/engine/editState';
 import type { ExportFormat } from '@/persistence/types';
 
 export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () => void }) {
   const t = useTranslations();
-  const [format, setFormat] = useState<ExportFormat>('jpeg');
+  // A transparent-background cut-out is available when the edit stack has an
+  // enabled transparent backgroundEffect op; it forces the lossless PNG path.
+  const canTransparent = engine
+    .getState()
+    .operations.some(
+      (o) =>
+        o.type === 'backgroundEffect' &&
+        o.enabled &&
+        (o.params as BackgroundEffectParams).mode === 'transparent',
+    );
+  const [format, setFormat] = useState<ExportFormat>(canTransparent ? 'png' : 'jpeg');
   const [ratio, setRatio] = useState<AspectRatioId>('free');
   const [quality, setQuality] = useState(0.92);
+  const [transparent, setTransparent] = useState(canTransparent);
   const [progress, setProgress] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -28,10 +39,10 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
       setMessage(null);
       try {
         const result = await engine.export({
-          format,
+          format: transparent ? 'png' : format,
           jpegQuality: quality,
           ratio,
-          transparentBackground: false,
+          transparentBackground: transparent,
           delivery,
           onProgress: (done, total) => setProgress(total ? done / total : 0),
         });
@@ -48,7 +59,7 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
         setProgress(null);
       }
     },
-    [engine, format, quality, ratio, t],
+    [engine, format, quality, ratio, transparent, t],
   );
 
   const developing = progress != null && progress < 1;
@@ -80,6 +91,12 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
             />
           </div>
 
+          {canTransparent && (
+            <Chip active={transparent} onClick={() => setTransparent((v) => !v)}>
+              {t('export.transparent')}
+            </Chip>
+          )}
+
           <div>
             <p className="mb-1.5 text-xs uppercase tracking-wide text-ink-mute">{t('export.aspect')}</p>
             <div className="flex flex-wrap gap-2">
@@ -91,7 +108,7 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
             </div>
           </div>
 
-          {format === 'jpeg' && (
+          {format === 'jpeg' && !transparent && (
             <div>
               <p className="mb-1.5 text-xs uppercase tracking-wide text-ink-mute">
                 {t('export.quality')} · {Math.round(quality * 100)}

@@ -12,9 +12,16 @@ import { whiteBalanceModule } from '@/modules/adjust/whiteBalance';
 import { filtersModule } from '@/modules/filters';
 import { finishingModule } from '@/modules/filters/finishing';
 import { presetsModule } from '@/modules/presets';
+import { faceModule } from '@/modules/face';
+import { skinModule } from '@/modules/skin';
+import { targetedModule } from '@/modules/face/targeted';
+import { bodyModule } from '@/modules/body';
+import { warpModule } from '@/modules/warp';
+import { backgroundModule } from '@/modules/background';
 import type { ToolModule } from './toolModule';
 
 export const toolModules: ToolModule[] = [
+  // Phase 1 — core adjustments
   adjustModule,
   cropModule,
   curvesModule,
@@ -23,4 +30,11 @@ export const toolModules: ToolModule[] = [
   filtersModule,
   finishingModule,
   presetsModule,
+  // Phase 2 — face & body intelligence
+  faceModule,
+  skinModule,
+  targetedModule,
+  bodyModule,
+  warpModule,
+  backgroundModule,
 ];

@@ -14,6 +14,7 @@ import { centeredRectForRatio, ratioFor } from '@/shared/aspectRatios';
 import { defaultCrop } from '@/engine/editState';
 import type { CropParams, EditState } from '@/engine/editState';
 import type { ExportJob, ExportResult, OriginalImage } from '@/engine/types';
+import type { DetectedLandmarkSet } from '@/vision/types';
 
 function exportCropFor(original: OriginalImage, editState: EditState, job: ExportJob): CropParams | null {
   if (job.ratio === 'free') return null;
@@ -42,6 +43,7 @@ export async function runExport(
   original: OriginalImage,
   editState: EditState,
   job: ExportJob,
+  landmarks?: DetectedLandmarkSet | null,
 ): Promise<ExportResult> {
   const exportCrop = exportCropFor(original, editState, job);
   const { rgba, width, height } = await renderFullResolution(
@@ -49,14 +51,17 @@ export async function runExport(
     editState,
     exportCrop,
     job.onProgress,
+    landmarks,
   );
 
+  // Transparent background requires the lossless (alpha) PNG path (T078, FR-211).
+  const format = job.transparentBackground ? 'png' : job.format;
   const baseName = original.fileName.replace(/\.[^.]+$/, '') || 'mypix';
-  const ext = job.format === 'png' ? 'png' : 'jpg';
+  const ext = format === 'png' ? 'png' : 'jpg';
   const fileName = `${baseName}-mypix.${ext}`;
 
   const blob =
-    job.format === 'png'
+    format === 'png'
       ? await encodePng(rgba, width, height)
       : await encodeJpeg(rgba, width, height, job.jpegQuality);
 

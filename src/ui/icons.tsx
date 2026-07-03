@@ -147,6 +147,55 @@ export const PlusIcon = (p: P) => (
   </svg>
 );
 
+export const FaceIcon = (p: P) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 14.5c1 1.2 2.1 1.8 3.5 1.8s2.5-.6 3.5-1.8" />
+    <circle cx="9" cy="10" r="0.6" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="10" r="0.6" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const SparkleIcon = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5 10.2 7.7z" />
+    <path d="M18 15l.7 1.8L20.5 17.5 18.7 18.2 18 20l-.7-1.8L15.5 17.5 17.3 16.8z" />
+  </svg>
+);
+
+export const SkinIcon = (p: P) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="9" cy="10" r="0.9" />
+    <circle cx="14.5" cy="13.5" r="0.7" />
+    <circle cx="13" cy="8.5" r="0.6" />
+  </svg>
+);
+
+export const BodyIcon = (p: P) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="4.5" r="2.2" />
+    <path d="M12 7v7" />
+    <path d="M7 9l5 2 5-2" />
+    <path d="M12 14l-3 7M12 14l3 7" />
+  </svg>
+);
+
+export const WarpIcon = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M3 12c3-4 6-4 9 0s6 4 9 0" />
+    <path d="M3 17c3-4 6-4 9 0s6 4 9 0" opacity="0.5" />
+  </svg>
+);
+
+export const BackgroundIcon = (p: P) => (
+  <svg {...base(p)}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <circle cx="12" cy="11" r="3.2" />
+    <path d="M6 20c1.5-2.5 3.6-3.8 6-3.8s4.5 1.3 6 3.8" />
+  </svg>
+);
+
 export const ImportIcon = (p: P) => (
   <svg {...base(p)}>
     <rect x="3" y="6" width="18" height="14" rx="2.5" />

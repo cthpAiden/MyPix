@@ -16,6 +16,13 @@ export interface ScrubConfig {
 
 export type PickCallback = (rgb: [number, number, number], nx: number, ny: number) => void;
 
+/** Stroke-brush handler for the manual liquify/warp tool (image-normalized coords). */
+export interface BrushHandler {
+  onStart: (nx: number, ny: number) => void;
+  onMove: (nx: number, ny: number) => void;
+  onEnd: () => void;
+}
+
 export interface ScrubHost {
   scrub: ScrubState;
   setConfig: (config: ScrubConfig | null) => void;
@@ -23,6 +30,10 @@ export interface ScrubHost {
   requestPick: (cb: PickCallback) => void;
   cancelPick: () => void;
   pickActive: boolean;
+  /** Enter brush mode; photo drags feed the handler until cancelled. */
+  requestBrush: (handler: BrushHandler) => void;
+  cancelBrush: () => void;
+  brushActive: boolean;
 }
 
 export const ScrubContext = createContext<ScrubHost | null>(null);

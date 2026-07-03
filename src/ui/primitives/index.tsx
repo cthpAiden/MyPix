@@ -137,6 +137,34 @@ export function Segmented<T extends string>({
   );
 }
 
+/** Labelled 0…100 range slider with a tabular readout (Phase 2 tools). */
+export function Slider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="flex justify-between text-[11px] uppercase tracking-wide text-ink-mute">
+        <span>{label}</span>
+        <span className="tnum text-ink-soft">{Math.round(value * 100)}</span>
+      </span>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={Math.round(value * 100)}
+        onChange={(e) => onChange(Number(e.target.value) / 100)}
+        className="w-full accent-safelight"
+      />
+    </label>
+  );
+}
+
 export function Chip({
   active,
   onClick,

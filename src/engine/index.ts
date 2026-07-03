@@ -8,6 +8,7 @@
  */
 import {
   HistoryRing,
+  cropStateHash,
   emptyEditState,
   reduce,
   type EditAction,
@@ -16,6 +17,13 @@ import {
 } from './editState';
 import { RenderOrchestrator, type OverlayRenderer } from './render/orchestrator';
 import { newId } from '@/shared/id';
+import { LandmarkCache } from '@/vision/cache';
+import {
+  disposeFaceProvider,
+  disposePoseProvider,
+  disposeSegmentationProvider,
+} from '@/vision';
+import type { DetectedLandmarkSet, VisionKind } from '@/vision/types';
 import type { CompareMode, ExportJob, ExportResult, OriginalImage, Project } from './types';
 
 export type Unsubscribe = () => void;
@@ -54,6 +62,7 @@ export class Engine {
   private history = new HistoryRing(this.state);
   private readonly orchestrator = new RenderOrchestrator();
   private readonly listeners = new Set<Listener>();
+  private readonly landmarkCache = new LandmarkCache();
   private rafId: number | null = null;
 
   /* -------------------------------- state -------------------------------- */
@@ -158,6 +167,42 @@ export class Engine {
     return this.orchestrator.sampleDisplayPixel(nx, ny);
   }
 
+  /* ------------------------------ detection ------------------------------ */
+
+  /** Current detection set if it matches the current photo/geometry, else null. */
+  getLandmarks(): DetectedLandmarkSet | null {
+    if (!this.project) return null;
+    return this.landmarkCache.get(this.project.original.fingerprint, cropStateHash(this.state));
+  }
+
+  /**
+   * Lazily run the requested detectors for the open project (contracts/vision.md).
+   * Feeds the result to the render pipeline and notifies subscribers. Errors
+   * (e.g. offline with an uncached model) propagate to the caller for a
+   * bilingual message.
+   */
+  async ensureDetection(kinds: VisionKind[]): Promise<DetectedLandmarkSet | null> {
+    if (!this.project) return null;
+    const { bitmap, fingerprint } = this.project.original;
+    const set = await this.landmarkCache.ensure(
+      bitmap,
+      fingerprint,
+      cropStateHash(this.state),
+      kinds,
+    );
+    this.orchestrator.setLandmarks(set);
+    this.emit();
+    return set;
+  }
+
+  /** Pick which detected face the landmark tools target (multi-face, FR-203). */
+  selectFace(index: number): void {
+    this.landmarkCache.selectFace(index);
+    this.orchestrator.setLandmarks(this.getLandmarks());
+    this.invalidate();
+    this.emit();
+  }
+
   /* --------------------------- project lifecycle ------------------------- */
 
   private openProject(original: OriginalImage, state: EditState): Project {
@@ -166,6 +211,8 @@ export class Engine {
     this.project = project;
     this.state = state;
     this.history.reset(state);
+    this.landmarkCache.clear();
+    this.orchestrator.setLandmarks(null);
     this.orchestrator.setProject(original);
     this.renderPreview();
     this.emit();
@@ -195,13 +242,18 @@ export class Engine {
     this.state = emptyEditState();
     this.history.reset(this.state);
     this.orchestrator.clearProject();
+    // Free detection models — the memory ceiling is the scarcest resource.
+    this.landmarkCache.clear();
+    disposeFaceProvider();
+    disposePoseProvider();
+    disposeSegmentationProvider();
     this.emit();
   }
 
   async export(job: ExportJob): Promise<ExportResult> {
     if (!this.project) throw new Error('export: no open project');
     const { runExport } = await import('./export');
-    return runExport(this.project.original, this.state, job);
+    return runExport(this.project.original, this.state, job, this.getLandmarks());
   }
 }
 

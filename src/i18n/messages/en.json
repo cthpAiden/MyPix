@@ -50,7 +50,8 @@
     "download": "Save to device",
     "developing": "Developing…",
     "finished": "Saved at full resolution",
-    "shareFailed": "Sharing wasn’t available — saved to your device instead."
+    "shareFailed": "Sharing wasn’t available — saved to your device instead.",
+    "transparent": "Transparent background"
   },
   "aspect": {
     "free": "Original",
@@ -75,6 +76,12 @@
     "whiteBalance": "White balance",
     "finishing": "Finishing",
     "presets": "Recipes",
+    "face": "Reshape",
+    "skin": "Skin",
+    "targeted": "Retouch",
+    "body": "Body",
+    "warp": "Liquify",
+    "background": "Background",
     "compare": "Compare"
   },
   "tools": {
@@ -174,6 +181,71 @@
       "empty": "No recipes yet. Craft a look you love, then save it here.",
       "codeCopied": "Share code copied",
       "applied": "Recipe applied"
+    },
+    "face": {
+      "title": "Reshape",
+      "autoBeautify": "Auto-beautify",
+      "hint": "Drag across the photo to adjust a feature",
+      "noFace": "No face detected in this photo.",
+      "manualHint": "Try the Liquify tool to reshape by hand.",
+      "faceN": "Face {n}",
+      "jaw": "Jaw",
+      "chin": "Chin",
+      "cheekWidth": "Cheeks",
+      "foreheadWidth": "Forehead",
+      "noseBridge": "Nose bridge",
+      "noseTip": "Nose tip",
+      "lipShape": "Lip shape",
+      "lipFullness": "Lip fullness",
+      "browShape": "Brow arch",
+      "browPosition": "Brow height",
+      "eyeSize": "Eye size",
+      "eyeSpacing": "Eye spacing"
+    },
+    "skin": {
+      "title": "Skin",
+      "smooth": "Smooth",
+      "tone": "Tone",
+      "warmth": "Warmth",
+      "noFace": "No face detected in this photo."
+    },
+    "targeted": {
+      "title": "Retouch",
+      "teethWhiten": "Teeth",
+      "eyeBrighten": "Eyes",
+      "underEyeReduce": "Under-eye",
+      "noFace": "No face detected in this photo."
+    },
+    "body": {
+      "title": "Body",
+      "waistSlim": "Waist",
+      "legLengthen": "Legs",
+      "armSlim": "Arms",
+      "heightIllusion": "Height",
+      "noBody": "No body detected in this photo.",
+      "manualHint": "Try the Liquify tool to reshape by hand."
+    },
+    "warp": {
+      "title": "Liquify",
+      "hint": "Drag on the photo to push, freeze, or restore",
+      "push": "Push",
+      "freeze": "Freeze",
+      "reconstruct": "Restore",
+      "size": "Size",
+      "strength": "Strength",
+      "clear": "Clear all"
+    },
+    "background": {
+      "title": "Background",
+      "blur": "Blur",
+      "grayscale": "Grayscale",
+      "replace": "Color",
+      "transparent": "Cut out",
+      "strength": "Blur amount",
+      "color": "Color",
+      "edge": "Edge refine",
+      "noSubject": "No subject detected in this photo.",
+      "transparentHint": "Export as PNG to keep the transparency."
     }
   },
   "resume": {
@@ -204,6 +276,11 @@
     "exportFailed": "Something went wrong while exporting. Please try again.",
     "offlineModel": "This feature needs one online load first. Connect once, then it works offline.",
     "generic": "Something went wrong. Please try again."
+  },
+  "vision": {
+    "detecting": "Looking at your photo…",
+    "failed": "Couldn’t analyze this photo. Please try again.",
+    "retry": "Try again"
   },
   "gift": {
     "hiddenNote": "For you — every photo you make here is already beautiful, because it’s yours."

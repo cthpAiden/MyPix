@@ -32,6 +32,7 @@ const serwist = new Serwist({
     {
       matcher: ({ url }) =>
         url.pathname.startsWith('/models/') ||
+        url.pathname.startsWith('/mediapipe/') ||
         url.pathname.startsWith('/filters/') ||
         url.pathname.startsWith('/stickers/'),
       handler: assetCache,

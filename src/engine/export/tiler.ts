@@ -8,11 +8,13 @@
  * limit that would otherwise blank/crash (FR-116, SC-011).
  */
 import { GLContext, PingPong } from '@/engine/gl/context';
-import { buildPipeline } from '@/engine/render/pipeline';
+import { buildPipeline, runPixelPasses } from '@/engine/render/pipeline';
 import { buildGeometryPass, croppedOutputSize } from '@/engine/render/geometry';
 import { defaultCrop } from '@/engine/editState';
 import type { CropParams, EditState } from '@/engine/editState';
 import type { OriginalImage } from '@/engine/types';
+import type { RenderContext } from '@/engine/render/renderContext';
+import type { DetectedLandmarkSet } from '@/vision/types';
 
 const READ_BAND = 256;
 
@@ -39,6 +41,7 @@ export async function renderFullResolution(
   editState: EditState,
   exportCrop: CropParams | null,
   onProgress?: (done: number, total: number) => void,
+  landmarks?: DetectedLandmarkSet | null,
 ): Promise<FullResResult> {
   const crop = exportCrop ?? (editState.operations.find((o) => o.type === 'crop' && o.enabled)?.params as CropParams) ?? defaultCrop();
   const out = croppedOutputSize(original.width, original.height, crop);
@@ -50,22 +53,17 @@ export async function renderFullResolution(
     throw new Error(`export: dimension exceeds MAX_TEXTURE_SIZE (${max})`);
   }
 
-  // 1. Pixel passes at full source resolution.
+  // 1. Pixel passes at full source resolution (identical pipeline to preview).
   const srcTex = gl.uploadImage(original.bitmap);
   const ping = new PingPong(gl, original.width, original.height);
   const texel: [number, number] = [1 / original.width, 1 / original.height];
-  const passes = buildPipeline(editState);
-  let edited = srcTex;
-  for (const pass of passes) {
-    const target = ping.dst;
-    gl.draw(
-      pass.fragment,
-      { u_src: { t: 'tex', v: edited, unit: 0 }, u_texel: { t: '2f', v: texel }, ...pass.uniforms(target) },
-      target,
-    );
-    edited = target.tex;
-    ping.swap();
-  }
+  const ctx: RenderContext = {
+    landmarks: landmarks ?? null,
+    imageWidth: original.width,
+    imageHeight: original.height,
+  };
+  const passes = buildPipeline(editState, ctx);
+  const edited = runPixelPasses(gl, srcTex, passes, ping, texel);
 
   // 2. Geometry into the full-resolution output (default framebuffer of `backing`).
   gl.resizeCanvas(out.width, out.height);

@@ -12,7 +12,7 @@ import { useRouter } from '@/i18n/navigation';
 import { getEngine, type Engine } from '@/engine';
 import { useEditState } from '@/ui/useEngine';
 import { useParamScrub } from '@/ui/useParamScrub';
-import { ScrubContext, type PickCallback, type ScrubConfig } from '@/ui/scrub';
+import { ScrubContext, type BrushHandler, type PickCallback, type ScrubConfig } from '@/ui/scrub';
 import { ToolSheet, type Detent } from '@/ui/ToolSheet';
 import { Toolbar } from '@/ui/editor/Toolbar';
 import { ExportSheet } from '@/ui/editor/ExportSheet';
@@ -45,12 +45,15 @@ function Editor({ engine }: { engine: Engine }) {
   const router = useRouter();
   const { reducedMotion } = useUI();
 
-  useEditState(engine); // re-render on edit-state changes (undo/redo availability, etc.)
+  useEditState(engine); // re-render on edit-state changes (undo/redo, detection)
   const [activeTool, setActiveTool] = useState('adjust');
   const [detent, setDetent] = useState<Detent>('half');
   const [scrubConfig, setScrubConfig] = useState<ScrubConfig | null>(null);
   const [pickCb, setPickCb] = useState<PickCallback | null>(null);
   const [pickPos, setPickPos] = useState<{ x: number; y: number } | null>(null);
+  const [brushCb, setBrushCb] = useState<BrushHandler | null>(null);
+  const [brushPos, setBrushPos] = useState<{ x: number; y: number } | null>(null);
+  const brushingRef = useRef(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [quotaWarn, setQuotaWarn] = useState(false);
 
@@ -92,47 +95,81 @@ function Editor({ engine }: { engine: Engine }) {
       requestPick: (cb: PickCallback) => setPickCb(() => cb),
       cancelPick: () => setPickCb(null),
       pickActive: pickCb != null,
+      requestBrush: (h: BrushHandler) => setBrushCb(() => h),
+      cancelBrush: () => setBrushCb(null),
+      brushActive: brushCb != null,
     }),
-    [scrub, pickCb],
+    [scrub, pickCb, brushCb],
+  );
+
+  const toNorm = useCallback(
+    (clientX: number, clientY: number) => {
+      const canvas = engine.getPreviewCanvas();
+      const rect = canvas.getBoundingClientRect();
+      return {
+        nx: clamp01((clientX - rect.left) / rect.width),
+        ny: clamp01((clientY - rect.top) / rect.height),
+      };
+    },
+    [engine],
   );
 
   const samplePick = useCallback(
     (clientX: number, clientY: number) => {
       if (!pickCb) return;
-      const canvas = engine.getPreviewCanvas();
-      const rect = canvas.getBoundingClientRect();
-      const nx = clamp01((clientX - rect.left) / rect.width);
-      const ny = clamp01((clientY - rect.top) / rect.height);
+      const { nx, ny } = toNorm(clientX, clientY);
       const rgb = engine.sampleDisplayPixel(nx, ny);
       if (rgb) pickCb(rgb, nx, ny);
       setPickCb(null);
       setPickPos(null);
     },
-    [engine, pickCb],
+    [engine, pickCb, toNorm],
   );
+
+  const endBrush = useCallback(() => {
+    if (!brushingRef.current || !brushCb) return;
+    brushingRef.current = false;
+    brushCb.onEnd();
+    setBrushPos(null);
+  }, [brushCb]);
 
   const photoHandlers = {
     onPointerDown: (e: React.PointerEvent) => {
       if (pickCb) setPickPos({ x: e.clientX, y: e.clientY });
-      else scrub.handlers.onPointerDown(e);
+      else if (brushCb) {
+        brushingRef.current = true;
+        const { nx, ny } = toNorm(e.clientX, e.clientY);
+        brushCb.onStart(nx, ny);
+        setBrushPos({ x: e.clientX, y: e.clientY });
+        (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      } else scrub.handlers.onPointerDown(e);
     },
     onPointerMove: (e: React.PointerEvent) => {
       if (pickCb) {
         if (pickPos) setPickPos({ x: e.clientX, y: e.clientY });
+      } else if (brushCb) {
+        if (brushingRef.current) {
+          const { nx, ny } = toNorm(e.clientX, e.clientY);
+          brushCb.onMove(nx, ny);
+          setBrushPos({ x: e.clientX, y: e.clientY });
+        }
       } else scrub.handlers.onPointerMove(e);
     },
     onPointerUp: (e: React.PointerEvent) => {
       if (pickCb) samplePick(e.clientX, e.clientY);
+      else if (brushCb) endBrush();
       else scrub.handlers.onPointerUp(e);
     },
     onPointerCancel: (e: React.PointerEvent) => {
       if (pickCb) setPickPos(null);
+      else if (brushCb) endBrush();
       else scrub.handlers.onPointerCancel(e);
     },
   };
 
   const activeModule = toolModules.find((m) => m.id === activeTool) ?? toolModules[0];
-  const ctx = useMemo(() => ({ engine, landmarks: null, locale }), [engine, locale]);
+  const landmarks = engine.getLandmarks();
+  const ctx = useMemo(() => ({ engine, landmarks, locale }), [engine, landmarks, locale]);
 
   return (
     <ScrubContext.Provider value={host}>
@@ -200,6 +237,15 @@ function Editor({ engine }: { engine: Engine }) {
             source={engine.getPreviewCanvas()}
             clientX={pickPos.x}
             clientY={pickPos.y}
+            visible
+          />
+        )}
+
+        {brushCb && brushPos && (
+          <PrecisionLoupe
+            source={engine.getPreviewCanvas()}
+            clientX={brushPos.x}
+            clientY={brushPos.y}
             visible
           />
         )}

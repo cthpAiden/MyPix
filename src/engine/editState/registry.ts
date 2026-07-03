@@ -7,17 +7,24 @@
 import { clamp } from '@/shared/math';
 import type {
   AdjustParams,
+  BackgroundEffectParams,
+  BodyReshapeParams,
   ColorGradeParams,
   ColorMixerParams,
   CropParams,
   CurvesParams,
+  FaceReshapeParams,
   FinishingParams,
   FilterParams,
   HSL,
+  LiquifyParams,
   MixerBand,
   OperationParams,
   OperationType,
   Point2D,
+  RetouchParams,
+  SkinSmoothParams,
+  TargetedEnhanceParams,
   ToneWheel,
   WhiteBalanceParams,
 } from './types';
@@ -60,6 +67,35 @@ export const PARAM_RANGES: Record<string, Range> = {
   // crop
   'crop.angle': [-45, 45],
   'crop.rotate90': [0, 3],
+  // faceReshape — every per-feature control −1…1 (faceIndex excluded on purpose)
+  'faceReshape.jaw': [-1, 1],
+  'faceReshape.chin': [-1, 1],
+  'faceReshape.cheekWidth': [-1, 1],
+  'faceReshape.foreheadWidth': [-1, 1],
+  'faceReshape.noseBridge': [-1, 1],
+  'faceReshape.noseTip': [-1, 1],
+  'faceReshape.lipShape': [-1, 1],
+  'faceReshape.lipFullness': [-1, 1],
+  'faceReshape.browShape': [-1, 1],
+  'faceReshape.browPosition': [-1, 1],
+  'faceReshape.eyeSize': [-1, 1],
+  'faceReshape.eyeSpacing': [-1, 1],
+  // skinSmooth
+  'skinSmooth.strength': [0, 1],
+  'skinSmooth.toneLightness': [-1, 1],
+  'skinSmooth.toneTint': [-1, 1],
+  // targetedEnhance
+  'targetedEnhance.teethWhiten': [0, 1],
+  'targetedEnhance.eyeBrighten': [0, 1],
+  'targetedEnhance.underEyeReduce': [0, 1],
+  // bodyReshape
+  'bodyReshape.waistSlim': [-1, 1],
+  'bodyReshape.legLengthen': [-1, 1],
+  'bodyReshape.armSlim': [-1, 1],
+  'bodyReshape.heightIllusion': [-1, 1],
+  // backgroundEffect
+  'backgroundEffect.blurStrength': [0, 1],
+  'backgroundEffect.edgeRefine': [0, 1],
 };
 
 /**
@@ -164,6 +200,50 @@ export function defaultFinishing(): FinishingParams {
   return { vignette: 0, grain: 0, clarity: 0, dehaze: 0, fade: 0, bloom: 0 };
 }
 
+/* --------------------------- Phase 2 defaults ---------------------------- */
+
+export function defaultFaceReshape(faceIndex = 0): FaceReshapeParams {
+  return {
+    faceIndex,
+    jaw: 0,
+    chin: 0,
+    cheekWidth: 0,
+    foreheadWidth: 0,
+    noseBridge: 0,
+    noseTip: 0,
+    lipShape: 0,
+    lipFullness: 0,
+    browShape: 0,
+    browPosition: 0,
+    eyeSize: 0,
+    eyeSpacing: 0,
+  };
+}
+
+export function defaultSkinSmooth(faceIndex = 0): SkinSmoothParams {
+  return { faceIndex, strength: 0, toneLightness: 0, toneTint: 0 };
+}
+
+export function defaultTargetedEnhance(faceIndex = 0): TargetedEnhanceParams {
+  return { faceIndex, teethWhiten: 0, eyeBrighten: 0, underEyeReduce: 0 };
+}
+
+export function defaultBodyReshape(): BodyReshapeParams {
+  return { waistSlim: 0, legLengthen: 0, armSlim: 0, heightIllusion: 0 };
+}
+
+export function defaultLiquify(): LiquifyParams {
+  return { strokes: [] };
+}
+
+export function defaultBackgroundEffect(): BackgroundEffectParams {
+  return { mode: 'blur', blurStrength: 0.5, color: '#000000', edgeRefine: 0.5 };
+}
+
+export function defaultRetouch(): RetouchParams {
+  return { strokes: [] };
+}
+
 /** Default params for any op type (Phase 1 fully implemented). */
 export function defaultParamsFor<T extends OperationType>(type: T): OperationParams[T] {
   switch (type) {
@@ -183,8 +263,21 @@ export function defaultParamsFor<T extends OperationType>(type: T): OperationPar
       return defaultFilter() as OperationParams[T];
     case 'finishing':
       return defaultFinishing() as OperationParams[T];
+    case 'faceReshape':
+      return defaultFaceReshape() as OperationParams[T];
+    case 'skinSmooth':
+      return defaultSkinSmooth() as OperationParams[T];
+    case 'targetedEnhance':
+      return defaultTargetedEnhance() as OperationParams[T];
+    case 'bodyReshape':
+      return defaultBodyReshape() as OperationParams[T];
+    case 'liquify':
+      return defaultLiquify() as OperationParams[T];
+    case 'backgroundEffect':
+      return defaultBackgroundEffect() as OperationParams[T];
+    case 'retouch':
+      return defaultRetouch() as OperationParams[T];
     default:
-      // Phase 2/3 ops are constructed by their own modules with explicit params.
       throw new Error(`defaultParamsFor: no default for op type "${type}"`);
   }
 }
@@ -232,7 +325,12 @@ export function clampParams<T extends OperationType>(
     case 'adjust':
     case 'whiteBalance':
     case 'finishing':
-    case 'filter': {
+    case 'filter':
+    case 'faceReshape':
+    case 'skinSmooth':
+    case 'targetedEnhance':
+    case 'bodyReshape':
+    case 'backgroundEffect': {
       clampFlat(type, p);
       if (type === 'whiteBalance' && p.neutralRef) {
         const r = p.neutralRef as Point2D;

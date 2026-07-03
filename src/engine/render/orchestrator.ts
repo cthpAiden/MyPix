@@ -10,11 +10,13 @@
  */
 import { GLContext, PingPong } from '@/engine/gl/context';
 import { PASSTHROUGH } from '@/engine/gl/pass';
-import { buildPipeline } from './pipeline';
+import { buildPipeline, runPixelPasses } from './pipeline';
 import { buildGeometryPass, croppedOutputSize } from './geometry';
 import { defaultCrop } from '@/engine/editState';
 import type { CropParams, EditState } from '@/engine/editState';
 import type { CompareMode, OriginalImage } from '@/engine/types';
+import type { RenderContext } from './renderContext';
+import type { DetectedLandmarkSet } from '@/vision/types';
 
 const DEFAULT_MAX_EDGE = 2048;
 
@@ -44,6 +46,7 @@ export class RenderOrchestrator {
   private compare: CompareMode = 'off';
   private overlay: OverlayRenderer | null = null;
   private lastState: EditState | null = null;
+  private landmarks: DetectedLandmarkSet | null = null;
 
   constructor(private readonly maxEdge = DEFAULT_MAX_EDGE) {
     this.backing = document.createElement('canvas');
@@ -77,6 +80,12 @@ export class RenderOrchestrator {
     if (this.lastState) this.render(this.lastState);
   }
 
+  /** Supply the current detection set for Phase 2 passes; re-renders. */
+  setLandmarks(landmarks: DetectedLandmarkSet | null): void {
+    this.landmarks = landmarks;
+    if (this.lastState) this.render(this.lastState);
+  }
+
   setProject(original: OriginalImage): void {
     this.original = original;
     this.workScale = Math.min(1, this.maxEdge / Math.max(original.width, original.height));
@@ -91,6 +100,7 @@ export class RenderOrchestrator {
   clearProject(): void {
     this.original = null;
     this.lastState = null;
+    this.landmarks = null;
     if (this.srcTex) {
       this.gl.deleteTexture(this.srcTex);
       this.srcTex = null;
@@ -105,26 +115,15 @@ export class RenderOrchestrator {
 
   /** Run the pixel passes over srcTex, returning the texture holding the result. */
   private runPixelPasses(state: EditState): WebGLTexture {
-    if (!this.srcTex || !this.ping) throw new Error('no project');
-    const passes = buildPipeline(state);
-    if (passes.length === 0) return this.srcTex;
+    if (!this.srcTex || !this.ping || !this.original) throw new Error('no project');
+    const ctx: RenderContext = {
+      landmarks: this.landmarks,
+      imageWidth: this.original.width,
+      imageHeight: this.original.height,
+    };
+    const passes = buildPipeline(state, ctx);
     const texel: [number, number] = [1 / this.workW, 1 / this.workH];
-    let current = this.srcTex;
-    for (const pass of passes) {
-      const target = this.ping.dst;
-      this.gl.draw(
-        pass.fragment,
-        {
-          u_src: { t: 'tex', v: current, unit: 0 },
-          u_texel: { t: '2f', v: texel },
-          ...pass.uniforms(target),
-        },
-        target,
-      );
-      current = target.tex;
-      this.ping.swap();
-    }
-    return current;
+    return runPixelPasses(this.gl, this.srcTex, passes, this.ping, texel);
   }
 
   /** Apply geometry to `tex` and copy the result into `dest2d`. */

@@ -201,13 +201,13 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Detect face; adjust each reshape control → only the targeted feature changes with smooth falloff, background stable; handle no-face and multi-face.
 
-- [ ] T060 [US2.1] Implement the FaceLandmarkProvider (MediaPipe Face Landmarker, 478 pts) as a lazy singleton with CPU/WASM-default delegate selection in `src/vision/faceLandmarker.ts` (research R3, contracts/vision.md)
-- [ ] T061 [US2.1] Implement region-polygon derivation + `DetectedLandmarkSet` caching keyed by `{fingerprint, cropStateHash}` (invalidated by the `cropStateHash` tracked in T042) in `src/vision/regions.ts` + `src/vision/cache.ts`
-- [ ] T062 [US2.1] Implement the barycentric mesh-warp geometry (face tessellation + border anchor ring, Delaunay) and the GL warp pass in `src/shared/warp/mesh.ts` + `src/engine/gl/passes/warp.ts` (research R5)
-- [ ] T063 [US2.1] Build the faceReshape module: per-feature `params→displacement` functions (jaw…eyeSpacing) and Panel in `src/modules/face/`
-- [ ] T064 [P] [US2.1] Unit test: warp displacement math (per-feature confinement, anchor-ring zero falloff) in `tests/unit/warp.test.ts`
-- [ ] T065 [US2.1] Build the multi-face picker and the no-face availability fallback suggesting manual warp in `src/modules/face/FaceSelect.tsx`
-- [ ] T066 [US2.1] Add service-worker runtime caching of the face `.task` model with a bilingual "needs one online load" offline message in `src/vision/modelLoader.ts` + `src/app/sw.ts`
+- [X] T060 [US2.1] Implement the FaceLandmarkProvider (MediaPipe Face Landmarker, 478 pts) as a lazy singleton with CPU/WASM-default delegate selection in `src/vision/faceLandmarker.ts` (research R3, contracts/vision.md)
+- [X] T061 [US2.1] Implement region-polygon derivation + `DetectedLandmarkSet` caching keyed by `{fingerprint, cropStateHash}` (invalidated by the `cropStateHash` tracked in T042) in `src/vision/regions.ts` + `src/vision/cache.ts`
+- [X] T062 [US2.1] Implement the barycentric mesh-warp geometry (face tessellation + border anchor ring, Delaunay) and the GL warp pass in `src/shared/warp/mesh.ts` + `src/engine/gl/passes/warp.ts` (research R5)
+- [X] T063 [US2.1] Build the faceReshape module: per-feature `params→displacement` functions (jaw…eyeSpacing) and Panel in `src/modules/face/`
+- [X] T064 [P] [US2.1] Unit test: warp displacement math (per-feature confinement, anchor-ring zero falloff) in `tests/unit/warp.test.ts`
+- [X] T065 [US2.1] Build the multi-face picker and the no-face availability fallback suggesting manual warp in `src/modules/face/FaceSelect.tsx`
+- [X] T066 [US2.1] Add service-worker runtime caching of the face `.task` model with a bilingual "needs one online load" offline message in `src/vision/modelLoader.ts` + `src/app/sw.ts`
 
 ---
 
@@ -217,8 +217,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Smooth skin → pores/texture remain visible at full res while uneven areas even out; strength ramps smoothly; tone shift looks natural.
 
-- [ ] T067 [US2.2] Implement frequency-separation smoothing GL passes (guided-filter low-freq blur, high-freq preserve, recombine, strength lerp) in `src/engine/gl/passes/skinSmooth.ts` (research R6)
-- [ ] T068 [US2.2] Implement the skin mask (faceOval minus eyes/brows/lips/nostrils + YCbCr chroma test, feathered) and tone/whitening shift + skin module Panel in `src/modules/skin/`
+- [X] T067 [US2.2] Implement frequency-separation smoothing GL passes (guided-filter low-freq blur, high-freq preserve, recombine, strength lerp) in `src/engine/gl/passes/skinSmooth.ts` (research R6)
+- [X] T068 [US2.2] Implement the skin mask (faceOval minus eyes/brows/lips/nostrils + YCbCr chroma test, feathered) and tone/whitening shift + skin module Panel in `src/modules/skin/`
 
 ---
 
@@ -228,7 +228,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Apply each → effect confined to the correct facial region, looks natural.
 
-- [ ] T069 [US2.3] Build the targetedEnhance module (teeth/eye/under-eye strengths, each masked to its landmark region) with GL pass + Panel in `src/modules/face/targeted/` + `src/engine/gl/passes/targeted.ts`
+- [X] T069 [US2.3] Build the targetedEnhance module (teeth/eye/under-eye strengths, each masked to its landmark region) with GL pass + Panel in `src/modules/face/targeted/` + `src/engine/gl/passes/targeted.ts`
 
 ---
 
@@ -238,7 +238,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Tap auto-beautify on a portrait → balanced result in ≤~3 s; components individually adjustable/undoable; no-face → guarded.
 
-- [ ] T070 [US2.4] Implement autoBeautify as a composite that inserts its component ops (skinSmooth + targetedEnhance + subtle faceReshape) at default strengths so each stays individually editable, with a no-face guard, in `src/modules/face/autoBeautify.ts`
+- [X] T070 [US2.4] Implement autoBeautify as a composite that inserts its component ops (skinSmooth + targetedEnhance + subtle faceReshape) at default strengths so each stays individually editable, with a no-face guard, in `src/modules/face/autoBeautify.ts`
 
 ---
 
@@ -248,8 +248,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Detect body; slim waist / lengthen legs → subject reshapes naturally, straight background lines acceptably intact; no-body → manual-warp fallback.
 
-- [ ] T071 [US2.5] Implement the PoseLandmarkProvider (MediaPipe Pose Landmarker, 33 pts) as a lazy singleton in `src/vision/poseLandmarker.ts`
-- [ ] T072 [US2.5] Build the bodyReshape module: coarse pose+limb-axis+border-anchor mesh, waist/leg/arm/height displacement functions, no-body fallback, Panel in `src/modules/body/`
+- [X] T071 [US2.5] Implement the PoseLandmarkProvider (MediaPipe Pose Landmarker, 33 pts) as a lazy singleton in `src/vision/poseLandmarker.ts`
+- [X] T072 [US2.5] Build the bodyReshape module: coarse pose+limb-axis+border-anchor mesh, waist/leg/arm/height displacement functions, no-body fallback, Panel in `src/modules/body/`
 
 ---
 
@@ -259,8 +259,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Push/pull with falloff; freeze an area → stays fixed; loupe appears offset; reconstruct eases warp back.
 
-- [ ] T073 [US2.6] Implement the liquify displacement-field accumulation (push/pull strokes → offsets, adjustable radius/strength) sampled in the warp pass in `src/modules/warp/liquify.ts` + `src/engine/gl/passes/warp.ts`
-- [ ] T074 [US2.6] Add the freeze/protect mask + reconstruct (lerp field toward zero) and integrate the shared `PrecisionLoupe` in `src/modules/warp/`
+- [X] T073 [US2.6] Implement the liquify displacement-field accumulation (push/pull strokes → offsets, adjustable radius/strength) sampled in the warp pass in `src/modules/warp/liquify.ts` + `src/engine/gl/passes/warp.ts`
+- [X] T074 [US2.6] Add the freeze/protect mask + reconstruct (lerp field toward zero) and integrate the shared `PrecisionLoupe` in `src/modules/warp/`
 
 ---
 
@@ -270,8 +270,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Enable blur → subject sharp, background blurs, edge clean at moderate strength; strength scales smoothly.
 
-- [ ] T075 [US2.7] Implement the SegmentationProvider (MediaPipe Image Segmenter selfie model) lazy singleton with `refineEdges` guided-filter post-process in `src/vision/segmenter.ts` (research R16)
-- [ ] T076 [US2.7] Build the backgroundEffect blur mode: mask-confined variable blur with feathered edge + background module Panel in `src/modules/background/` + `src/engine/gl/passes/bgBlur.ts`
+- [X] T075 [US2.7] Implement the SegmentationProvider (MediaPipe Image Segmenter selfie model) lazy singleton with `refineEdges` guided-filter post-process in `src/vision/segmenter.ts` (research R16)
+- [X] T076 [US2.7] Build the backgroundEffect blur mode: mask-confined variable blur with feathered edge + background module Panel in `src/modules/background/` + `src/engine/gl/passes/bgBlur.ts`
 
 ---
 
@@ -281,8 +281,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Remove background; replace with color and grayscale; refine edge; export a transparent PNG with transparency preserved.
 
-- [ ] T077 [US2.8] Extend backgroundEffect with replace/grayscale/transparent modes and edge-refinement level in `src/modules/background/`
-- [ ] T078 [US2.8] Implement the transparent-background PNG export path (`ExportJob.transparentBackground`, alpha composite in tiler/encoder) in `src/engine/export/tiler.ts` + `src/engine/export/encode.ts`
+- [X] T077 [US2.8] Extend backgroundEffect with replace/grayscale/transparent modes and edge-refinement level in `src/modules/background/`
+- [X] T078 [US2.8] Implement the transparent-background PNG export path (`ExportJob.transparentBackground`, alpha composite in tiler/encoder) in `src/engine/export/tiler.ts` + `src/engine/export/encode.ts`
 
 **Checkpoint**: Phase 2 face/body/background intelligence complete.
 

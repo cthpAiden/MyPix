@@ -6,7 +6,7 @@
  * therefore identical between the working-resolution preview and the tiled
  * full-resolution export (SC-003).
  */
-import type { RenderTarget, UniformValue } from './context';
+import type { GLContext, RenderTarget, UniformValue } from './context';
 
 /** Common header: precision, the incoming UV, the source sampler, helpers. */
 export const GLSL_PRELUDE = `#version 300 es
@@ -66,13 +66,42 @@ void main() {
 }`);
 
 /**
+ * A CPU-computed auxiliary texture (RGBA8) a pass needs bound to a sampler —
+ * e.g. a warp displacement field or a landmark-derived mask (Phase 2). The pass
+ * runner uploads it, binds it to `name` at `unit`, and disposes it after the
+ * draw so no GPU memory leaks per frame.
+ */
+export interface DataTexture {
+  name: string;
+  unit: number;
+  data: Uint8Array;
+  width: number;
+  height: number;
+}
+
+/**
  * A single pipeline pass: a fragment shader plus a uniform provider. The
  * orchestrator supplies `u_src` (previous result) and `u_texel`; the pass adds
  * its own params. Passes are ordered deterministically by pipeline stage.
+ *
+ * Most passes are one fullscreen fragment draw. Phase 2 passes may additionally
+ * carry `textures` (auxiliary data textures) and/or provide `execute` — a custom
+ * multi-draw routine (frequency separation, background blur) that manages its
+ * own scratch targets, renders the final result into `dst`, and returns the
+ * texture holding it.
  */
 export interface RenderPass {
   name: string;
   fragment: string;
   /** Extra uniforms beyond u_src/u_texel, computed from the target size. */
   uniforms(target: RenderTarget): Record<string, UniformValue>;
+  /** Auxiliary data textures uploaded and bound by the runner before the draw. */
+  textures?: DataTexture[];
+  /** Custom multi-pass executor; returns the texture holding the result. */
+  execute?: (
+    gl: GLContext,
+    src: WebGLTexture,
+    dst: RenderTarget,
+    texel: [number, number],
+  ) => WebGLTexture;
 }

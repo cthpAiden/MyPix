@@ -29,5 +29,7 @@ Thumbs.db
 *.tmp
 *.swp
 
-# Large self-hosted model binaries are fetched/placed at deploy (see public/models/README.md)
+# Large self-hosted model binaries + MediaPipe WASM fileset are placed at deploy
+# (see public/models/README.md)
 public/models/*.task
+public/mediapipe/

@@ -7,12 +7,13 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { Engine } from '@/engine';
 import type { Locale } from '@/i18n/routing';
+import type { DetectedLandmarkSet } from '@/vision/types';
 
 export type Availability = 'available' | { unavailable: string };
 
 export interface ToolContext {
   engine: Engine;
-  landmarks: null; // Phase 2 fills DetectedLandmarkSet
+  landmarks: DetectedLandmarkSet | null;
   locale: Locale;
 }
 

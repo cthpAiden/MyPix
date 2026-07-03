@@ -12,3 +12,12 @@ Place before shipping Phase 2:
 - `selfie_segmenter.task` — Image Segmenter (selfie)
 
 Source: https://developers.google.com/mediapipe/solutions (Apache-2.0).
+
+## MediaPipe WASM fileset
+
+The vision runtime also needs the MediaPipe WASM fileset self-hosted (so it is
+same-origin for COEP + service-worker offline caching). Copy the contents of
+`node_modules/@mediapipe/tasks-vision/wasm/` into `public/mediapipe/wasm/` — the
+loader (`src/vision/modelLoader.ts`) resolves the fileset from `/mediapipe/wasm`.
+Like the models, these are runtime-cached by the service worker on first use and
+are intentionally not committed.

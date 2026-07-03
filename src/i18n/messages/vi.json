@@ -50,7 +50,8 @@
     "download": "Lưu về máy",
     "developing": "Đang rửa ảnh…",
     "finished": "Đã lưu ở độ phân giải đầy đủ",
-    "shareFailed": "Không thể chia sẻ — đã lưu về máy của bạn."
+    "shareFailed": "Không thể chia sẻ — đã lưu về máy của bạn.",
+    "transparent": "Nền trong suốt"
   },
   "aspect": {
     "free": "Nguyên bản",
@@ -75,6 +76,12 @@
     "whiteBalance": "Cân bằng trắng",
     "finishing": "Hoàn thiện",
     "presets": "Công thức",
+    "face": "Tạo dáng",
+    "skin": "Da",
+    "targeted": "Chỉnh sửa",
+    "body": "Dáng người",
+    "warp": "Bóp méo",
+    "background": "Nền",
     "compare": "So sánh"
   },
   "tools": {
@@ -174,6 +181,71 @@
       "empty": "Chưa có công thức nào. Hãy tạo một tông màu bạn thích rồi lưu vào đây.",
       "codeCopied": "Đã sao chép mã chia sẻ",
       "applied": "Đã áp dụng công thức"
+    },
+    "face": {
+      "title": "Tạo dáng khuôn mặt",
+      "autoBeautify": "Làm đẹp tự động",
+      "hint": "Kéo ngang trên ảnh để chỉnh từng nét",
+      "noFace": "Không phát hiện khuôn mặt trong ảnh này.",
+      "manualHint": "Hãy thử công cụ Bóp méo để chỉnh bằng tay.",
+      "faceN": "Khuôn mặt {n}",
+      "jaw": "Hàm",
+      "chin": "Cằm",
+      "cheekWidth": "Gò má",
+      "foreheadWidth": "Trán",
+      "noseBridge": "Sống mũi",
+      "noseTip": "Đầu mũi",
+      "lipShape": "Dáng môi",
+      "lipFullness": "Độ dày môi",
+      "browShape": "Vòm mày",
+      "browPosition": "Vị trí mày",
+      "eyeSize": "Kích cỡ mắt",
+      "eyeSpacing": "Khoảng cách mắt"
+    },
+    "skin": {
+      "title": "Da",
+      "smooth": "Mịn da",
+      "tone": "Tông da",
+      "warmth": "Độ ấm",
+      "noFace": "Không phát hiện khuôn mặt trong ảnh này."
+    },
+    "targeted": {
+      "title": "Chỉnh sửa",
+      "teethWhiten": "Răng",
+      "eyeBrighten": "Mắt",
+      "underEyeReduce": "Bọng mắt",
+      "noFace": "Không phát hiện khuôn mặt trong ảnh này."
+    },
+    "body": {
+      "title": "Dáng người",
+      "waistSlim": "Eo",
+      "legLengthen": "Chân",
+      "armSlim": "Cánh tay",
+      "heightIllusion": "Chiều cao",
+      "noBody": "Không phát hiện dáng người trong ảnh này.",
+      "manualHint": "Hãy thử công cụ Bóp méo để chỉnh bằng tay."
+    },
+    "warp": {
+      "title": "Bóp méo",
+      "hint": "Kéo trên ảnh để đẩy, khoá hoặc phục hồi",
+      "push": "Đẩy",
+      "freeze": "Khoá",
+      "reconstruct": "Phục hồi",
+      "size": "Cỡ cọ",
+      "strength": "Cường độ",
+      "clear": "Xoá tất cả"
+    },
+    "background": {
+      "title": "Nền",
+      "blur": "Xoá phông",
+      "grayscale": "Trắng đen",
+      "replace": "Màu nền",
+      "transparent": "Tách nền",
+      "strength": "Độ mờ",
+      "color": "Màu",
+      "edge": "Tinh chỉnh viền",
+      "noSubject": "Không phát hiện chủ thể trong ảnh này.",
+      "transparentHint": "Xuất dạng PNG để giữ nền trong suốt."
     }
   },
   "resume": {
@@ -204,6 +276,11 @@
     "exportFailed": "Đã có lỗi khi xuất ảnh. Vui lòng thử lại.",
     "offlineModel": "Tính năng này cần tải trực tuyến một lần. Kết nối một lần, sau đó dùng được ngoại tuyến.",
     "generic": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "vision": {
+    "detecting": "Đang phân tích ảnh của bạn…",
+    "failed": "Không thể phân tích ảnh này. Vui lòng thử lại.",
+    "retry": "Thử lại"
   },
   "gift": {
     "hiddenNote": "Dành cho bạn — mỗi tấm ảnh bạn tạo ở đây đều đã đẹp sẵn, vì nó là của bạn."
