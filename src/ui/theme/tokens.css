@@ -1,0 +1,89 @@
+/**
+ * Darkroom design tokens (research R15).
+ * Layered near-blacks, a single amber "safelight" accent, off-white type,
+ * tabular/ledger numerals for value readouts. Tailwind v4 CSS-first theme.
+ */
+@import 'tailwindcss';
+
+@theme {
+  /* Layered near-black surfaces (the darkroom "stage" → elevated panels). */
+  --color-stage: #0a0908;
+  --color-surface-1: #131110;
+  --color-surface-2: #1c1917;
+  --color-surface-3: #262220;
+  --color-hairline: #34302c;
+
+  /* Single amber safelight accent — active state only. */
+  --color-safelight: #f2a35e;
+  --color-safelight-dim: #b4702f;
+  --color-safelight-glow: color-mix(in oklab, #f2a35e 22%, transparent);
+
+  /* Off-white type ramp. */
+  --color-ink: #f4efe9;
+  --color-ink-soft: #c8c1b8;
+  --color-ink-mute: #8f8880;
+  --color-ink-faint: #5f5a54;
+
+  /* Status. */
+  --color-danger: #e5675f;
+  --color-ok: #7fbf8f;
+
+  /* Radii & motion. */
+  --radius-sheet: 22px;
+  --radius-panel: 16px;
+  --radius-control: 12px;
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Fonts wired by next/font in the root layout (variables below). */
+  --font-sans: var(--font-be-vietnam), var(--font-noto), system-ui, sans-serif;
+
+  /* Safe-area helpers surfaced as theme spacing. */
+  --spacing-safe-top: env(safe-area-inset-top);
+  --spacing-safe-bottom: env(safe-area-inset-bottom);
+}
+
+/* Ledger numerals: tabular figures for value readouts. */
+@utility tnum {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-stage);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* Generous line-height so stacked Vietnamese tone marks never clip (i18n rule 4). */
+  line-height: 1.5;
+  height: 100%;
+}
+
+body {
+  /* One-handed app shell: no pull-to-refresh, no accidental text selection. */
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  overflow: hidden;
+}
+
+/* Re-enable selection where it belongs. */
+input,
+textarea,
+[contenteditable='true'] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

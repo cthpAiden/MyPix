@@ -1,0 +1,217 @@
+{
+  "common": {
+    "appName": "MyPix",
+    "cancel": "Cancel",
+    "done": "Done",
+    "save": "Save",
+    "reset": "Reset",
+    "undo": "Undo",
+    "redo": "Redo",
+    "apply": "Apply",
+    "remove": "Remove",
+    "back": "Back",
+    "close": "Close",
+    "loading": "Loading…",
+    "yes": "Yes",
+    "no": "No",
+    "share": "Share",
+    "download": "Download",
+    "export": "Export",
+    "add": "Add",
+    "ok": "OK"
+  },
+  "home": {
+    "title": "MyPix",
+    "subtitle": "A little darkroom, just for you.",
+    "importCta": "Choose a photo",
+    "takePhoto": "Take a photo",
+    "importHint": "Everything happens on your phone. Nothing is ever uploaded.",
+    "giftNote": "Made with love."
+  },
+  "import": {
+    "choosePhoto": "Choose a photo",
+    "takePhoto": "Take a photo",
+    "decoding": "Developing your photo…",
+    "dropHint": "or drop a photo here"
+  },
+  "editor": {
+    "tools": "Tools",
+    "compare": "Compare",
+    "reEdit": "Reopen this step"
+  },
+  "export": {
+    "title": "Export",
+    "format": "Format",
+    "jpeg": "JPEG",
+    "png": "PNG",
+    "quality": "Quality",
+    "aspect": "Aspect ratio",
+    "share": "Share",
+    "download": "Save to device",
+    "developing": "Developing…",
+    "finished": "Saved at full resolution",
+    "shareFailed": "Sharing wasn’t available — saved to your device instead."
+  },
+  "aspect": {
+    "free": "Original",
+    "1:1": "Square 1:1",
+    "4:5": "Portrait 4:5",
+    "9:16": "Story 9:16",
+    "16:9": "Wide 16:9",
+    "4:3": "Classic 4:3",
+    "3:2": "Photo 3:2"
+  },
+  "compare": {
+    "hold": "Hold to see the original",
+    "before": "Before",
+    "after": "After"
+  },
+  "toolbar": {
+    "adjust": "Light & Color",
+    "crop": "Crop",
+    "filters": "Filters",
+    "curves": "Curves",
+    "color": "Color",
+    "whiteBalance": "White balance",
+    "finishing": "Finishing",
+    "presets": "Recipes",
+    "compare": "Compare"
+  },
+  "tools": {
+    "adjust": {
+      "title": "Light & Color",
+      "brightness": "Brightness",
+      "contrast": "Contrast",
+      "exposure": "Exposure",
+      "highlights": "Highlights",
+      "shadows": "Shadows",
+      "whites": "Whites",
+      "blacks": "Blacks",
+      "saturation": "Saturation",
+      "vibrance": "Vibrance",
+      "temperature": "Temperature",
+      "tint": "Tint",
+      "sharpness": "Sharpness",
+      "resetOne": "Reset this control"
+    },
+    "crop": {
+      "title": "Crop & Rotate",
+      "ratio": "Ratio",
+      "rotate": "Rotate 90°",
+      "straighten": "Straighten",
+      "perspective": "Perspective",
+      "grid": "Guides",
+      "reset": "Reset crop"
+    },
+    "filters": {
+      "title": "Filters",
+      "intensity": "Intensity",
+      "items": {
+        "none": "None",
+        "kodachrome": "Kodachrome",
+        "portra": "Portra",
+        "noir": "Noir",
+        "faded": "Faded",
+        "goldenhour": "Golden Hour",
+        "azure": "Azure"
+      }
+    },
+    "curves": {
+      "title": "Curves",
+      "rgb": "RGB",
+      "r": "Red",
+      "g": "Green",
+      "b": "Blue"
+    },
+    "color": {
+      "mixerTitle": "Color Mixer",
+      "gradeTitle": "Color Grading",
+      "hue": "Hue",
+      "sat": "Saturation",
+      "lum": "Luminance",
+      "shadows": "Shadows",
+      "midtones": "Midtones",
+      "highlights": "Highlights",
+      "blending": "Blending",
+      "balance": "Balance",
+      "bands": {
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "aqua": "Aqua",
+        "blue": "Blue",
+        "purple": "Purple",
+        "magenta": "Magenta"
+      }
+    },
+    "whiteBalance": {
+      "title": "White Balance",
+      "temp": "Temperature",
+      "tint": "Tint",
+      "picker": "Tap a neutral area",
+      "picking": "Tap a grey area of the photo"
+    },
+    "finishing": {
+      "title": "Finishing",
+      "vignette": "Vignette",
+      "grain": "Grain",
+      "clarity": "Clarity",
+      "dehaze": "Dehaze",
+      "fade": "Fade",
+      "bloom": "Bloom"
+    },
+    "presets": {
+      "title": "Recipes",
+      "save": "Save current look",
+      "name": "Recipe name",
+      "namePlaceholder": "e.g. Warm portrait",
+      "apply": "Apply",
+      "rename": "Rename",
+      "delete": "Delete",
+      "shareCode": "Copy share code",
+      "importCode": "Paste a share code",
+      "empty": "No recipes yet. Craft a look you love, then save it here.",
+      "codeCopied": "Share code copied",
+      "applied": "Recipe applied"
+    }
+  },
+  "resume": {
+    "title": "Pick up where you left off?",
+    "savedAt": "Last edited {when}",
+    "restore": "Continue editing",
+    "discard": "Start fresh",
+    "pickPhoto": "Choose the same photo to continue",
+    "mismatchTitle": "That’s a different photo",
+    "mismatchBody": "This doesn’t look like the photo you were editing. Use it anyway, or pick the original.",
+    "useAnyway": "Use this photo",
+    "pickOriginal": "Pick the original"
+  },
+  "install": {
+    "title": "Add MyPix to your home screen",
+    "iosStep1": "Tap the Share button",
+    "iosStep2": "Choose “Add to Home Screen”",
+    "iosStep3": "Open MyPix from your home screen — it works offline",
+    "offlineReady": "Ready to use offline",
+    "dismiss": "Got it"
+  },
+  "errors": {
+    "importFailed": "That photo couldn’t be opened.",
+    "unsupportedFormat": "That file type isn’t supported. Try a JPEG, PNG, or HEIC photo.",
+    "corruptImage": "That photo seems damaged and couldn’t be read.",
+    "zeroDimension": "That image has no size and can’t be edited.",
+    "storageFull": "Your device storage is full. Export this result now to keep it safe.",
+    "exportFailed": "Something went wrong while exporting. Please try again.",
+    "offlineModel": "This feature needs one online load first. Connect once, then it works offline.",
+    "generic": "Something went wrong. Please try again."
+  },
+  "gift": {
+    "hiddenNote": "For you — every photo you make here is already beautiful, because it’s yours."
+  },
+  "a11y": {
+    "localeToggle": "Switch language",
+    "openTool": "Open {tool}",
+    "sheetHandle": "Drag to resize panel",
+    "compareSlider": "Before and after slider"
+  }
+}

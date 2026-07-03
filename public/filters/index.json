@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "filters": [
+    { "id": "none", "category": "basic", "nameKey": "tools.filters.items.none", "adjust": {} },
+    { "id": "kodachrome", "category": "film", "nameKey": "tools.filters.items.kodachrome", "adjust": { "temperature": 10, "contrast": 16, "saturation": 12, "blacks": -8 } },
+    { "id": "portra", "category": "film", "nameKey": "tools.filters.items.portra", "adjust": { "temperature": 6, "highlights": -10, "shadows": 12, "saturation": -4, "vibrance": 8 } },
+    { "id": "noir", "category": "mono", "nameKey": "tools.filters.items.noir", "adjust": { "saturation": -100, "contrast": 24, "blacks": -10 } },
+    { "id": "faded", "category": "matte", "nameKey": "tools.filters.items.faded", "adjust": { "contrast": -14, "saturation": -12, "blacks": 18, "whites": -8 } },
+    { "id": "goldenhour", "category": "warm", "nameKey": "tools.filters.items.goldenhour", "adjust": { "temperature": 18, "tint": 6, "vibrance": 14, "highlights": 8 } },
+    { "id": "azure", "category": "cool", "nameKey": "tools.filters.items.azure", "adjust": { "temperature": -16, "tint": -4, "saturation": 6, "shadows": 8 } }
+  ]
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="MyPix">
+  <rect width="512" height="512" rx="112" fill="#0a0908"/>
+  <!-- Safelight aperture mark -->
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#34302c" stroke-width="14"/>
+  <g fill="#f2a35e">
+    <path d="M256 96 a160 160 0 0 1 138.6 80 l-52 30 A100 100 0 0 0 256 156 Z"/>
+  </g>
+  <circle cx="256" cy="256" r="58" fill="#131110" stroke="#f2a35e" stroke-width="12"/>
+  <circle cx="256" cy="256" r="16" fill="#f4efe9"/>
+</svg>

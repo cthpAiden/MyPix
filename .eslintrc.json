@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+  },
+  "overrides": [
+    {
+      "files": ["src/modules/*/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/modules/*", "@/modules/*/**"],
+                "message": "Modules must not import sibling modules (Constitution V). Communicate only via engine.dispatch() and the edit-state contract."
+              },
+              {
+                "group": ["../*/**", "../../modules/**"],
+                "message": "No relative cross-module imports (Constitution V). Use engine/, vision/, shared/, ui/, or i18n/ instead."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

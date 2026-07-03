@@ -1,0 +1,217 @@
+{
+  "common": {
+    "appName": "MyPix",
+    "cancel": "Huỷ",
+    "done": "Xong",
+    "save": "Lưu",
+    "reset": "Đặt lại",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "apply": "Áp dụng",
+    "remove": "Xoá",
+    "back": "Quay lại",
+    "close": "Đóng",
+    "loading": "Đang tải…",
+    "yes": "Có",
+    "no": "Không",
+    "share": "Chia sẻ",
+    "download": "Tải về",
+    "export": "Xuất ảnh",
+    "add": "Thêm",
+    "ok": "OK"
+  },
+  "home": {
+    "title": "MyPix",
+    "subtitle": "Một phòng tối nhỏ, của riêng bạn.",
+    "importCta": "Chọn một tấm ảnh",
+    "takePhoto": "Chụp một tấm ảnh",
+    "importHint": "Mọi thứ diễn ra ngay trên máy của bạn. Không gì được tải lên cả.",
+    "giftNote": "Làm bằng cả tấm lòng."
+  },
+  "import": {
+    "choosePhoto": "Chọn một tấm ảnh",
+    "takePhoto": "Chụp một tấm ảnh",
+    "decoding": "Đang rửa ảnh của bạn…",
+    "dropHint": "hoặc thả ảnh vào đây"
+  },
+  "editor": {
+    "tools": "Công cụ",
+    "compare": "So sánh",
+    "reEdit": "Mở lại bước này"
+  },
+  "export": {
+    "title": "Xuất ảnh",
+    "format": "Định dạng",
+    "jpeg": "JPEG",
+    "png": "PNG",
+    "quality": "Chất lượng",
+    "aspect": "Tỉ lệ khung",
+    "share": "Chia sẻ",
+    "download": "Lưu về máy",
+    "developing": "Đang rửa ảnh…",
+    "finished": "Đã lưu ở độ phân giải đầy đủ",
+    "shareFailed": "Không thể chia sẻ — đã lưu về máy của bạn."
+  },
+  "aspect": {
+    "free": "Nguyên bản",
+    "1:1": "Vuông 1:1",
+    "4:5": "Chân dung 4:5",
+    "9:16": "Story 9:16",
+    "16:9": "Rộng 16:9",
+    "4:3": "Cổ điển 4:3",
+    "3:2": "Ảnh 3:2"
+  },
+  "compare": {
+    "hold": "Giữ để xem ảnh gốc",
+    "before": "Trước",
+    "after": "Sau"
+  },
+  "toolbar": {
+    "adjust": "Ánh sáng & Màu",
+    "crop": "Cắt",
+    "filters": "Bộ lọc",
+    "curves": "Đường cong",
+    "color": "Màu sắc",
+    "whiteBalance": "Cân bằng trắng",
+    "finishing": "Hoàn thiện",
+    "presets": "Công thức",
+    "compare": "So sánh"
+  },
+  "tools": {
+    "adjust": {
+      "title": "Ánh sáng & Màu",
+      "brightness": "Độ sáng",
+      "contrast": "Tương phản",
+      "exposure": "Phơi sáng",
+      "highlights": "Vùng sáng",
+      "shadows": "Vùng tối",
+      "whites": "Trắng",
+      "blacks": "Đen",
+      "saturation": "Độ bão hoà",
+      "vibrance": "Độ rực",
+      "temperature": "Nhiệt độ màu",
+      "tint": "Sắc thái",
+      "sharpness": "Độ nét",
+      "resetOne": "Đặt lại mục này"
+    },
+    "crop": {
+      "title": "Cắt & Xoay",
+      "ratio": "Tỉ lệ",
+      "rotate": "Xoay 90°",
+      "straighten": "Chỉnh thẳng",
+      "perspective": "Phối cảnh",
+      "grid": "Đường dẫn",
+      "reset": "Đặt lại cắt"
+    },
+    "filters": {
+      "title": "Bộ lọc",
+      "intensity": "Cường độ",
+      "items": {
+        "none": "Không",
+        "kodachrome": "Kodachrome",
+        "portra": "Portra",
+        "noir": "Noir",
+        "faded": "Phai màu",
+        "goldenhour": "Giờ vàng",
+        "azure": "Thiên thanh"
+      }
+    },
+    "curves": {
+      "title": "Đường cong",
+      "rgb": "RGB",
+      "r": "Đỏ",
+      "g": "Lục",
+      "b": "Lam"
+    },
+    "color": {
+      "mixerTitle": "Trộn màu",
+      "gradeTitle": "Phối màu",
+      "hue": "Tông màu",
+      "sat": "Độ bão hoà",
+      "lum": "Độ sáng",
+      "shadows": "Vùng tối",
+      "midtones": "Vùng trung",
+      "highlights": "Vùng sáng",
+      "blending": "Hoà trộn",
+      "balance": "Cân bằng",
+      "bands": {
+        "red": "Đỏ",
+        "orange": "Cam",
+        "yellow": "Vàng",
+        "green": "Lục",
+        "aqua": "Xanh ngọc",
+        "blue": "Lam",
+        "purple": "Tím",
+        "magenta": "Hồng sen"
+      }
+    },
+    "whiteBalance": {
+      "title": "Cân bằng trắng",
+      "temp": "Nhiệt độ màu",
+      "tint": "Sắc thái",
+      "picker": "Chạm vào vùng trung tính",
+      "picking": "Chạm vào một vùng xám trên ảnh"
+    },
+    "finishing": {
+      "title": "Hoàn thiện",
+      "vignette": "Tối góc",
+      "grain": "Hạt phim",
+      "clarity": "Độ trong",
+      "dehaze": "Khử mờ",
+      "fade": "Phai màu",
+      "bloom": "Toả sáng"
+    },
+    "presets": {
+      "title": "Công thức",
+      "save": "Lưu tông màu hiện tại",
+      "name": "Tên công thức",
+      "namePlaceholder": "vd. Chân dung ấm",
+      "apply": "Áp dụng",
+      "rename": "Đổi tên",
+      "delete": "Xoá",
+      "shareCode": "Sao chép mã chia sẻ",
+      "importCode": "Dán mã chia sẻ",
+      "empty": "Chưa có công thức nào. Hãy tạo một tông màu bạn thích rồi lưu vào đây.",
+      "codeCopied": "Đã sao chép mã chia sẻ",
+      "applied": "Đã áp dụng công thức"
+    }
+  },
+  "resume": {
+    "title": "Tiếp tục chỗ đang làm dở?",
+    "savedAt": "Sửa lần cuối {when}",
+    "restore": "Tiếp tục chỉnh",
+    "discard": "Bắt đầu mới",
+    "pickPhoto": "Chọn lại đúng tấm ảnh để tiếp tục",
+    "mismatchTitle": "Đây là một tấm ảnh khác",
+    "mismatchBody": "Ảnh này không giống tấm bạn đang chỉnh. Vẫn dùng ảnh này, hoặc chọn lại ảnh gốc.",
+    "useAnyway": "Dùng ảnh này",
+    "pickOriginal": "Chọn ảnh gốc"
+  },
+  "install": {
+    "title": "Thêm MyPix vào màn hình chính",
+    "iosStep1": "Chạm nút Chia sẻ",
+    "iosStep2": "Chọn “Thêm vào MH chính”",
+    "iosStep3": "Mở MyPix từ màn hình chính — dùng được cả khi ngoại tuyến",
+    "offlineReady": "Sẵn sàng dùng ngoại tuyến",
+    "dismiss": "Đã hiểu"
+  },
+  "errors": {
+    "importFailed": "Không thể mở tấm ảnh đó.",
+    "unsupportedFormat": "Định dạng này chưa được hỗ trợ. Hãy thử ảnh JPEG, PNG hoặc HEIC.",
+    "corruptImage": "Tấm ảnh có vẻ bị lỗi và không đọc được.",
+    "zeroDimension": "Ảnh này không có kích thước nên không thể chỉnh.",
+    "storageFull": "Bộ nhớ thiết bị đã đầy. Hãy xuất kết quả này ngay để giữ lại.",
+    "exportFailed": "Đã có lỗi khi xuất ảnh. Vui lòng thử lại.",
+    "offlineModel": "Tính năng này cần tải trực tuyến một lần. Kết nối một lần, sau đó dùng được ngoại tuyến.",
+    "generic": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "gift": {
+    "hiddenNote": "Dành cho bạn — mỗi tấm ảnh bạn tạo ở đây đều đã đẹp sẵn, vì nó là của bạn."
+  },
+  "a11y": {
+    "localeToggle": "Đổi ngôn ngữ",
+    "openTool": "Mở {tool}",
+    "sheetHandle": "Kéo để đổi cỡ bảng",
+    "compareSlider": "Thanh trượt trước và sau"
+  }
+}

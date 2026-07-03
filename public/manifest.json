@@ -1,0 +1,22 @@
+{
+  "name": "MyPix — Beauty & Photo Editor",
+  "short_name": "MyPix",
+  "description": "A private, fully on-device beauty and photo editor. English & Tiếng Việt.",
+  "start_url": "/en",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0908",
+  "theme_color": "#0a0908",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["photo", "graphics", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
