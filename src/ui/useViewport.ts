@@ -127,10 +127,18 @@ export function useViewport(opts: {
   };
 
   const dims = () => {
-    const rect = container.current?.getBoundingClientRect();
+    const el = container.current;
+    if (!el) return { cW: 0, cH: 0, outW: canvas.width, outH: canvas.height };
+    // Measure the CONTENT box, not the border box: the host reserves bottom
+    // padding for the tool sheet's peek, and fitting to the padded height would
+    // frame the photo against space it can't use — rendering it oversized and
+    // clipped behind the sheet. clientWidth/Height exclude borders/scrollbars.
+    const cs = getComputedStyle(el);
+    const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
     return {
-      cW: rect?.width ?? 0,
-      cH: rect?.height ?? 0,
+      cW: Math.max(0, el.clientWidth - padX),
+      cH: Math.max(0, el.clientHeight - padY),
       outW: canvas.width,
       outH: canvas.height,
     };

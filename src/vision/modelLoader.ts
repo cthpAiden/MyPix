@@ -31,10 +31,32 @@ export const VISION_DELEGATE: 'CPU' | 'GPU' = 'CPU';
 
 let filesetPromise: Promise<WasmFileset> | null = null;
 
+/**
+ * MediaPipe's TFLite WASM runtime prints benign init lines (e.g. "INFO: Created
+ * TensorFlow Lite XNNPACK delegate for CPU.") through Emscripten's `printErr`,
+ * which lands on `console.error` — so Next.js's dev overlay surfaces them as
+ * error cards even though nothing failed. Drop only those exact TFLite init
+ * lines; every other console.error passes through untouched. Idempotent.
+ */
+let logFilterInstalled = false;
+function installVisionLogFilter(): void {
+  if (logFilterInstalled || typeof console === 'undefined') return;
+  logFilterInstalled = true;
+  const benign = (args: unknown[]) =>
+    typeof args[0] === 'string' &&
+    (args[0].startsWith('INFO: Created TensorFlow Lite') || args[0].includes('XNNPACK delegate'));
+  const original = console.error.bind(console);
+  console.error = (...args: unknown[]) => {
+    if (benign(args)) return;
+    original(...args);
+  };
+}
+
 /** The shared MediaPipe vision fileset (WASM), loaded once. */
 export async function getVisionFileset(): Promise<WasmFileset> {
   if (!filesetPromise) {
     filesetPromise = (async () => {
+      installVisionLogFilter();
       const { FilesetResolver } = await import('@mediapipe/tasks-vision');
       return FilesetResolver.forVisionTasks(WASM_BASE);
     })();
