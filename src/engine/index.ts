@@ -11,11 +11,13 @@ import {
   cropStateHash,
   emptyEditState,
   reduce,
+  type BlendPayload,
   type EditAction,
   type EditState,
   type OperationType,
 } from './editState';
 import { RenderOrchestrator, type OverlayRenderer } from './render/orchestrator';
+import { blendAssets } from './render/assetStore';
 import { newId } from '@/shared/id';
 import { LandmarkCache } from '@/vision/cache';
 import {
@@ -54,6 +56,14 @@ function labelFor(action: EditAction): string {
     default:
       return 'edit';
   }
+}
+
+/** Blend layers' picked-image asset ids referenced by a state. */
+function blendAssetIds(state: EditState): string[] {
+  return state.layers
+    .filter((l) => l.kind === 'blendImage')
+    .map((l) => (l.payload as unknown as BlendPayload).assetId)
+    .filter(Boolean);
 }
 
 export class Engine {
@@ -206,6 +216,10 @@ export class Engine {
   /* --------------------------- project lifecycle ------------------------- */
 
   private openProject(original: OriginalImage, state: EditState): Project {
+    // History is about to reset, so every blend picked-image asset the incoming
+    // state does not reference becomes unreachable — free those, keep the rest
+    // (a same-session draft resume re-adopts a state still referencing its own).
+    blendAssets.retain(blendAssetIds(state));
     const now = Date.now();
     const project: Project = { id: newId('proj'), original, createdAt: now, modifiedAt: now };
     this.project = project;
@@ -242,7 +256,9 @@ export class Engine {
     this.state = emptyEditState();
     this.history.reset(this.state);
     this.orchestrator.clearProject();
-    // Free detection models — the memory ceiling is the scarcest resource.
+    // Free detection models and the picked blend images — the memory ceiling is
+    // the scarcest resource, and history (the only remaining referrer) is gone.
+    blendAssets.clear();
     this.landmarkCache.clear();
     disposeFaceProvider();
     disposePoseProvider();

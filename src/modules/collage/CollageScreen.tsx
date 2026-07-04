@@ -12,6 +12,7 @@ import { useRouter } from '@/i18n/navigation';
 import { Button, Chip, Slider } from '@/ui/primitives';
 import { CloseIcon, DownloadIcon, ShareIcon } from '@/ui/icons';
 import { deliver } from '@/engine/export/deliver';
+import { AssetStore } from '@/engine/render/assetStore';
 import { drawCollage } from './render';
 import { LAYOUTS, defaultCollage, layoutById, type CollageProject } from './types';
 
@@ -30,6 +31,13 @@ export function CollageScreen() {
   const fileRef = useRef<HTMLInputElement>(null);
   const images = useRef(new Map<string, HTMLImageElement>());
   const [, force] = useState(0);
+
+  // Owns the picked cell images' object URLs. Collage has no undo history, so
+  // nothing can reference them once the screen unmounts — revoke them all then.
+  const assetsRef = useRef<AssetStore | null>(null);
+  if (!assetsRef.current) assetsRef.current = new AssetStore();
+  const assets = assetsRef.current;
+  useEffect(() => () => assets.clear(), [assets]);
 
   const loadImage = useCallback((url: string) => {
     if (images.current.has(url)) return;
@@ -66,7 +74,7 @@ export function CollageScreen() {
   };
 
   const addPhoto = (file: File) => {
-    const url = URL.createObjectURL(file);
+    const url = assets.url(assets.register(file))!;
     loadImage(url);
     const cells = [...project.cells];
     const target =

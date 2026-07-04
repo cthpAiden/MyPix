@@ -13,6 +13,7 @@ import { canvasBlend } from '@/shared/layers';
 import { fontCss } from '@/shared/fonts';
 import { makeupShapes } from './makeupShapes';
 import { getImage } from './layerAssets';
+import { blendAssets } from './assetStore';
 import type {
   BlendPayload,
   DoodlePayload,
@@ -58,7 +59,10 @@ export function layerAssetUrls(layers: Layer[]): string[] {
   for (const l of layers) {
     if (!l.enabled) continue;
     if (l.kind === 'sticker') urls.push((l.payload as unknown as StickerPayload).src);
-    else if (l.kind === 'blendImage') urls.push((l.payload as unknown as BlendPayload).src);
+    else if (l.kind === 'blendImage') {
+      const url = blendAssets.url((l.payload as unknown as BlendPayload).assetId);
+      if (url) urls.push(url);
+    }
   }
   return urls.filter(Boolean);
 }
@@ -280,7 +284,9 @@ function drawFrame(g: Ctx, layer: Layer, env: LayerDrawEnv): void {
 
 function drawBlend(g: Ctx, layer: Layer, env: LayerDrawEnv): void {
   const p = layer.payload as unknown as BlendPayload;
-  const img = getImage(p.src);
+  const src = blendAssets.url(p.assetId);
+  if (!src) return; // asset released, or a reloaded draft's id — draw nothing
+  const img = getImage(src);
   if (!img) return;
   // Cover-fit the second image across the whole frame.
   const iw = img.width;

@@ -314,7 +314,9 @@ export interface FramePayload {
 }
 
 export interface BlendPayload {
-  src: string; // object URL of the second image
+  /** Session AssetStore id resolving to the second image's object URL (never a
+   *  raw blob: URL — that would leak and would not survive a reload). */
+  assetId: string;
 }
 
 export interface DoodleStroke {

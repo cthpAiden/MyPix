@@ -84,7 +84,7 @@ Run the loop below **10×** in one session without relaunching. A single Safari 
 |-------|---|---|---|---|---|---|---|---|---|----|
 | Completed w/o reload | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 
-Confirm each `closeProject()` frees the face/pose/segmentation providers (memory should not grow monotonically across cycles) and that repeated exports do not accumulate live WebGL contexts (T094).
+Confirm each `closeProject()` frees the face/pose/segmentation providers (memory should not grow monotonically across cycles) and that repeated exports do not accumulate live WebGL contexts (T094). Also swap the blend (double-exposure) image ~20× and confirm live `blob:` URLs do not accumulate (the `AssetStore` retains them for undo, then revokes on project open/close); undo/redo across the swaps must still show the correct image.
 
 ## Findings → hardening (T094)
 

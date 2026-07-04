@@ -3,8 +3,9 @@
 /**
  * Blend module — double exposure (US3.6, T087). A second image as a Layer,
  * cover-fit over the photo, with selectable blend mode and opacity. The second
- * image is session-only (an object URL — pixels are never persisted); the
- * composite previews and exports through the shared layer compositor.
+ * image is session-only (held by the AssetStore — the layer persists only its
+ * assetId, never pixels); the composite previews and exports through the shared
+ * layer compositor.
  */
 import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
@@ -12,6 +13,7 @@ import { BlendIcon } from '@/ui/icons';
 import { Button, Segmented, Slider, Surface } from '@/ui/primitives';
 import { useEditState } from '@/ui/useEngine';
 import { addLayer, layersOfKind, removeLayer, updateLayer } from '@/shared/layers';
+import { blendAssets } from '@/engine/render/assetStore';
 import type { BlendMode, BlendPayload } from '@/engine/editState';
 import type { ToolContext, ToolModule } from '@/ui/toolModule';
 
@@ -27,8 +29,8 @@ function BlendPanel({ ctx }: { ctx: ToolContext }) {
   const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const src = URL.createObjectURL(file);
-    const payload: BlendPayload = { src };
+    const assetId = blendAssets.register(file);
+    const payload: BlendPayload = { assetId };
     if (layer) {
       updateLayer(ctx.engine, layer.id, { payload: payload as unknown as Record<string, unknown> });
     } else {

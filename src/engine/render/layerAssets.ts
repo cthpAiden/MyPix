@@ -65,3 +65,17 @@ export async function preloadAssets(srcs: string[]): Promise<void> {
     [...new Set(srcs)].filter(Boolean).map((s) => (cache.has(s) ? Promise.resolve() : startLoad(s))),
   );
 }
+
+/**
+ * Drop the decoded images for the given URLs so their pixels can be GC'd. The
+ * cache is keyed by URL, so when an owning object URL is revoked (project close)
+ * its decode would otherwise stay pinned here forever — the AssetStore calls
+ * this alongside revokeObjectURL.
+ */
+export function evictImages(srcs: string[]): void {
+  for (const s of srcs) {
+    cache.delete(s);
+    inflight.delete(s);
+    failed.delete(s);
+  }
+}
