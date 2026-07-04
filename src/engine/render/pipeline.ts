@@ -25,11 +25,13 @@ import { buildWarpPass } from '@/engine/gl/passes/warp';
 import { buildSkinSmoothPass } from '@/engine/gl/passes/skinSmooth';
 import { buildTargetedPass } from '@/engine/gl/passes/targeted';
 import { buildBackgroundPass } from '@/engine/gl/passes/bgBlur';
+import { buildRetouchPass } from '@/engine/gl/passes/retouch';
 import type { RenderContext } from './renderContext';
 import type {
   SkinSmoothParams,
   TargetedEnhanceParams,
   BackgroundEffectParams,
+  RetouchParams,
 } from '@/engine/editState';
 import type { FaceLandmarks } from '@/vision/types';
 
@@ -57,6 +59,17 @@ function faceFor(ctx: RenderContext, faceIndex: number): FaceLandmarks | null {
 /** Build the ordered pass list for the current edit stack. */
 export function buildPipeline(state: EditState, ctx?: RenderContext): RenderPass[] {
   const passes: RenderPass[] = [];
+
+  // Manual clone/heal repairs run first, on the raw pixels, before adjustments
+  // compute over the frame (needs image dimensions → only when ctx is present).
+  if (ctx) {
+    const retouchOp = findEnabled(state.operations, 'retouch');
+    if (retouchOp) {
+      const rp = buildRetouchPass(retouchOp.params as RetouchParams, ctx.imageWidth, ctx.imageHeight);
+      if (rp) passes.push(rp);
+    }
+  }
+
   for (const type of PIXEL_STAGE_ORDER) {
     const op = findEnabled(state.operations, type);
     if (!op) continue;

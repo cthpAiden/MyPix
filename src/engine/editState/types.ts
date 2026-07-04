@@ -234,13 +234,21 @@ export type AnyOperation = {
  * Layers (overlay content — Phase 3; schema declared now)
  * ------------------------------------------------------------------ */
 
-export type LayerKind =
-  | 'makeup'
-  | 'text'
-  | 'sticker'
-  | 'frame'
-  | 'blendImage'
-  | 'doodle';
+/**
+ * All creative overlay layer kinds, as a runtime array so export coverage can
+ * be verified against it: every kind here MUST be composited by drawLayers /
+ * rasterizeLayers so preview ≡ full-resolution export (FR-309, T098).
+ */
+export const LAYER_KINDS = [
+  'makeup',
+  'text',
+  'sticker',
+  'frame',
+  'blendImage',
+  'doodle',
+] as const;
+
+export type LayerKind = (typeof LAYER_KINDS)[number];
 
 export interface LayerTransform {
   x: number;
@@ -265,6 +273,57 @@ export interface Layer {
   /** kind-specific content (text/sticker/makeup/doodle payloads). */
   payload: Record<string, unknown>;
   enabled: boolean;
+}
+
+/* ---- Kind-specific layer payloads (Phase 3). Coordinates are output-space
+ * normalized [0,1] unless noted; makeup re-derives geometry from landmarks
+ * at render time (stores intent, not baked pixels — contracts/edit-state.md). */
+
+export type MakeupType = 'lipstick' | 'blush' | 'eyeshadow' | 'liner' | 'brow';
+export type MakeupFinish = 'matte' | 'gloss' | 'shimmer';
+export interface MakeupPayload {
+  makeupType: MakeupType;
+  faceIndex: number;
+  color: string; // hex
+  intensity: number; // 0…1
+  finish: MakeupFinish;
+}
+
+export type TextAlign = 'left' | 'center' | 'right';
+export interface TextPayload {
+  content: string; // NFC-normalized on input
+  fontId: string; // must be a verified-Vietnamese font (modules/text/fonts)
+  sizeRel: number; // font size as a fraction of the output height
+  color: string;
+  align: TextAlign;
+  outline: number; // 0…1 outline weight (0 = none)
+  shadow: boolean;
+}
+
+export interface StickerPayload {
+  assetId: string;
+  src: string; // resolved asset URL
+  aspect: number; // intrinsic width / height, for aspect-correct sizing
+}
+
+export type FrameStyle = 'border' | 'filmstrip' | 'instant';
+export interface FramePayload {
+  style: FrameStyle;
+  width: number; // fraction of min(outW, outH)
+  color: string;
+}
+
+export interface BlendPayload {
+  src: string; // object URL of the second image
+}
+
+export interface DoodleStroke {
+  points: Point2D[]; // output-normalized
+  color: string;
+  width: number; // fraction of min(outW, outH)
+}
+export interface DoodlePayload {
+  strokes: DoodleStroke[];
 }
 
 /* ------------------------------------------------------------------ *
@@ -296,7 +355,7 @@ export type EditAction =
   | { kind: 'op/toggle'; id: string; enabled: boolean }
   | { kind: 'op/remove'; id: string }
   | { kind: 'layer/add'; layer: Layer }
-  | { kind: 'layer/update'; id: string; patch: Partial<Layer> }
+  | { kind: 'layer/update'; id: string; patch: Partial<Layer>; coalesceKey?: string }
   | { kind: 'layer/remove'; id: string }
   | { kind: 'layer/reorder'; id: string; toIndex: number }
   | { kind: 'history/undo' }

@@ -5,7 +5,7 @@
  * crop only reframes the result. Same math drives preview and tiled export.
  */
 import { buildFragment, type RenderPass } from '@/engine/gl/pass';
-import type { CropParams } from '@/engine/editState';
+import type { CropParams, Point2D } from '@/engine/editState';
 
 export const GEOMETRY_FRAGMENT = buildFragment(`
 uniform vec4 u_rect;      // crop x,y,w,h in 0..1 (rotated space)
@@ -77,6 +77,27 @@ export function croppedOutputSize(
     width: Math.max(1, Math.round(baseW * c.rect.w)),
     height: Math.max(1, Math.round(baseH * c.rect.h)),
   };
+}
+
+/**
+ * Map an original-image normalized point [0,1] through the crop geometry to the
+ * cropped output's normalized space — the CPU inverse of GEOMETRY_FRAGMENT used
+ * to place landmark-anchored overlays (makeup) over the reframed photo. Inverts
+ * the crop rect window and 90° rotation (the reframing transforms); the fine
+ * straighten angle and perspective quad are treated as identity here (they don't
+ * shift makeup meaningfully and the common no-crop case stays exact).
+ */
+export function mapSourceToOutput(p: Point2D, c: CropParams): Point2D {
+  let x = p.x;
+  let y = p.y;
+  const k = ((c.rotate90 % 4) + 4) % 4;
+  for (let i = 0; i < k; i++) {
+    const nx = 1 - y;
+    const ny = x;
+    x = nx;
+    y = ny;
+  }
+  return { x: (x - c.rect.x) / c.rect.w, y: (y - c.rect.y) / c.rect.h };
 }
 
 export function buildGeometryPass(c: CropParams, srcAspect: number): RenderPass {

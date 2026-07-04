@@ -294,8 +294,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Apply each type → color/opacity/finish adjustable, tracks facial features, individually removable.
 
-- [ ] T079 [US3.1] Implement the makeup Layer with `LandmarkAnchor` (stores intent, re-derives geometry from landmarks at render time) in the render orchestrator in `src/engine/render/layers.ts`
-- [ ] T080 [US3.1] Build the makeup module: lipstick/blush/eyeshadow/liner/brow with color/opacity/finish, per-item add/remove, Panel in `src/modules/makeup/`
+- [X] T079 [US3.1] Implement the makeup Layer with `LandmarkAnchor` (stores intent, re-derives geometry from landmarks at render time) in the render orchestrator in `src/engine/render/layers.ts`
+- [X] T080 [US3.1] Build the makeup module: lipstick/blush/eyeshadow/liner/brow with color/opacity/finish, per-item add/remove, Panel in `src/modules/makeup/`
 
 ---
 
@@ -305,8 +305,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Type stacked-tone-mark Vietnamese, style/move/resize; renders correctly on canvas and in full-res export.
 
-- [ ] T081 [US3.2] Build the text module as a Fabric text Layer: NFC normalization, verified-Vietnamese font restriction, size/color/align/outline/shadow styling in `src/modules/text/`
-- [ ] T082 [P] [US3.2] Implement per-tile full-resolution rasterization of Fabric text/overlay layers at export scale in `src/engine/export/rasterizeLayers.ts`
+- [X] T081 [US3.2] Build the text module as a Fabric text Layer: NFC normalization, verified-Vietnamese font restriction, size/color/align/outline/shadow styling in `src/modules/text/`
+- [X] T082 [P] [US3.2] Implement per-tile full-resolution rasterization of Fabric text/overlay layers at export scale in `src/engine/export/rasterizeLayers.ts`
 
 ---
 
@@ -316,7 +316,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Place, move/scale/rotate/opacity, layer, export; a new file + index entry appears without code change.
 
-- [ ] T083 [US3.3] Build the stickers module: `public/stickers/index.json`-driven library, placement + transform + opacity as Layers, SW runtime caching in `src/modules/stickers/` + `public/stickers/index.json`
+- [X] T083 [US3.3] Build the stickers module: `public/stickers/index.json`-driven library, placement + transform + opacity as Layers, SW runtime caching in `src/modules/stickers/` + `public/stickers/index.json`
 
 ---
 
@@ -326,7 +326,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Apply frames, adjust width/color; compose correctly and export at full resolution.
 
-- [ ] T084 [US3.4] Build the frames module: adjustable-width color borders + film-strip/instant styles that adapt to aspect ratio in `src/modules/frames/` + `public/frames/index.json`
+- [X] T084 [US3.4] Build the frames module: adjustable-width color borders + film-strip/instant styles that adapt to aspect ratio in `src/modules/frames/` + `public/frames/index.json`
 
 ---
 
@@ -336,8 +336,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Clone over an object and heal over a blemish → repairs blend acceptably and export at full resolution.
 
-- [ ] T085 [US3.5] Implement the retouch module clone-stamp (`retouch` op: source-offset stroke copy) with GL pass in `src/modules/retouch/` + `src/engine/gl/passes/retouch.ts`
-- [ ] T086 [US3.5] Add the heal variant (sampled texture blended into surrounding tone) in `src/modules/retouch/heal.ts`
+- [X] T085 [US3.5] Implement the retouch module clone-stamp (`retouch` op: source-offset stroke copy) with GL pass in `src/modules/retouch/` + `src/engine/gl/passes/retouch.ts`
+- [X] T086 [US3.5] Add the heal variant (sampled texture blended into surrounding tone) in `src/modules/retouch/heal.ts`
 
 ---
 
@@ -347,7 +347,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Blend a second image, cycle blend modes and opacity; composite previews and exports correctly.
 
-- [ ] T087 [US3.6] Build the blend module: second-image Layer with blend modes (screen/multiply/overlay…) + opacity in `src/modules/blend/`
+- [X] T087 [US3.6] Build the blend module: second-image Layer with blend modes (screen/multiply/overlay…) + opacity in `src/modules/blend/`
 
 ---
 
@@ -357,7 +357,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Create a collage, adjust layout/spacing, reposition/swap a cell, export at high resolution.
 
-- [ ] T088 [US3.7] Build the collage mode as a `CollageProject` (cells referencing multiple source images, layouts, spacing, background) with high-res export in `src/modules/collage/`
+- [X] T088 [US3.7] Build the collage mode as a `CollageProject` (cells referencing multiple source images, layouts, spacing, background) with high-res export in `src/modules/collage/`
 
 ---
 
@@ -367,7 +367,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Draw with different brush settings → smooth strokes; export at full resolution.
 
-- [ ] T089 [US3.8] Build the draw module: freehand doodle brush Layer (size/color/opacity) via Fabric free-draw in `src/modules/draw/`
+- [X] T089 [US3.8] Build the draw module: freehand doodle brush Layer (size/color/opacity) via Fabric free-draw in `src/modules/draw/`
 
 **Checkpoint**: Phase 3 creative & makeup layer complete; all creative content is a Layer that rasterizes into export.
 
@@ -379,8 +379,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Walk the whole app in each language → no missing/untranslated/placeholder strings, no clipped labels, natural Vietnamese.
 
-- [ ] T090 [US4.1] Audit every module's `tools.<id>.*` namespace for full EN+VI coverage and natural (human-reviewed) Vietnamese phrasing; fix any clipping/overflow in `src/i18n/messages/` + affected components
-- [ ] T091 [P] [US4.1] Extend the i18n-parity test to assert full coverage across all namespaces and fail on any English-fallback in `vi` in `tests/unit/i18n-parity.test.ts`
+- [X] T090 [US4.1] Audit every module's `tools.<id>.*` namespace for full EN+VI coverage and natural (human-reviewed) Vietnamese phrasing; fix any clipping/overflow in `src/i18n/messages/` + affected components
+- [X] T091 [P] [US4.1] Extend the i18n-parity test to assert full coverage across all namespaces and fail on any English-fallback in `vi` in `tests/unit/i18n-parity.test.ts`
 
 ---
 
@@ -390,7 +390,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Render tone-mark-heavy strings across UI and exported text overlays → correct, unclipped glyphs everywhere.
 
-- [ ] T092 [US4.2] Verify tone-mark-heavy Vietnamese rendering across UI and full-res exported text overlays (adequate vertical spacing, no clipping); screen out any offending overlay font in `tests/device/vietnamese-fonts.md` + `src/modules/text/fonts.ts`
+- [X] T092 [US4.2] Verify tone-mark-heavy Vietnamese rendering across UI and full-res exported text overlays (adequate vertical spacing, no clipping); screen out any offending overlay font in `tests/device/vietnamese-fonts.md` + `src/modules/text/fonts.ts`
 
 ---
 
@@ -400,8 +400,8 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: On device, run repeated 48 MP exports + face/body/segmentation across a session → acceptable speed, no memory-driven crash/reload.
 
-- [ ] T093 [US4.3] Author and run the device performance matrix (48 MP tiled export, face/body/segmentation repetition, memory ceiling), recording concrete numeric pass thresholds that make SC-009 (scrub preview frame rate — e.g., target fps) and SC-011 (full-res export completion time) independently measurable, in `tests/device/performance.md`
-- [ ] T094 [US4.3] Apply performance hardening from matrix findings (working-res preview caps, tile size, provider disposal on project close, GL resource reuse) across `src/engine/` + `src/vision/`
+- [X] T093 [US4.3] Author and run the device performance matrix (48 MP tiled export, face/body/segmentation repetition, memory ceiling), recording concrete numeric pass thresholds that make SC-009 (scrub preview frame rate — e.g., target fps) and SC-011 (full-res export completion time) independently measurable, in `tests/device/performance.md`
+- [X] T094 [US4.3] Apply performance hardening from matrix findings (working-res preview caps, tile size, provider disposal on project close, GL resource reuse) across `src/engine/` + `src/vision/`
 
 ---
 
@@ -411,7 +411,7 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Independent Test**: Install, go offline, complete import→edit→export, reconnect → update applies cleanly, in-progress draft survives.
 
-- [ ] T095 [US4.4] Author and run the device install/offline/update matrix (install, airplane-mode full flow, online update preserving an in-progress draft) in `tests/device/pwa-offline.md`
+- [X] T095 [US4.4] Author and run the device install/offline/update matrix (install, airplane-mode full flow, online update preserving an in-progress draft) in `tests/device/pwa-offline.md`
 
 **Checkpoint**: All four phases verified on the target device.
 
@@ -421,12 +421,12 @@ Single Next.js frontend project (plan.md "Structure Decision"). Source at `src/`
 
 **Purpose**: Cross-story hardening, automated flow coverage, and gift-personal delight
 
-- [ ] T096 [P] Playwright flow tests: import→edit→export, draft recovery via reload, locale switch mid-edit, offline via route interception in `tests/integration/flows.spec.ts`
-- [ ] T097 [P] GL golden-image tile render spot-checks (WebKit) in `tests/integration/gl-golden.spec.ts`
-- [ ] T098 Verify FR-309: all Phase 3 creative layers (makeup/text/stickers/frames/blend/collage/doodle/retouch) rasterize into the full-resolution export in `src/engine/export/rasterizeLayers.ts`
-- [ ] T099 [P] Implement the "developing" export reveal + content-shaped skeleton loading/empty states in `src/ui/`
-- [ ] T100 [P] Implement the tasteful gift easter-eggs (long-press-logo private note, date-triggered accent, secret filter unlock) behind `settings.unlocks` in `src/ui/gift/`
-- [ ] T101 Run the full quickstart.md validation V1–V8 and confirm the Constitution Check in plan.md still holds
+- [X] T096 [P] Playwright flow tests: import→edit→export, draft recovery via reload, locale switch mid-edit, offline via route interception in `tests/integration/flows.spec.ts`
+- [X] T097 [P] GL golden-image tile render spot-checks (WebKit) in `tests/integration/gl-golden.spec.ts`
+- [X] T098 Verify FR-309: all Phase 3 creative layers (makeup/text/stickers/frames/blend/collage/doodle/retouch) rasterize into the full-resolution export in `src/engine/export/rasterizeLayers.ts`
+- [X] T099 [P] Implement the "developing" export reveal + content-shaped skeleton loading/empty states in `src/ui/`
+- [X] T100 [P] Implement the tasteful gift easter-eggs (long-press-logo private note, date-triggered accent, secret filter unlock) behind `settings.unlocks` in `src/ui/gift/`
+- [X] T101 Run the full quickstart.md validation V1–V8 and confirm the Constitution Check in plan.md still holds
 
 ---
 

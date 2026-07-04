@@ -11,7 +11,9 @@
 import { GLContext, PingPong } from '@/engine/gl/context';
 import { PASSTHROUGH } from '@/engine/gl/pass';
 import { buildPipeline, runPixelPasses } from './pipeline';
-import { buildGeometryPass, croppedOutputSize } from './geometry';
+import { buildGeometryPass, croppedOutputSize, mapSourceToOutput } from './geometry';
+import { drawLayers } from './layers';
+import { onAssetLoad } from './layerAssets';
 import { defaultCrop } from '@/engine/editState';
 import type { CropParams, EditState } from '@/engine/editState';
 import type { CompareMode, OriginalImage } from '@/engine/types';
@@ -47,6 +49,7 @@ export class RenderOrchestrator {
   private overlay: OverlayRenderer | null = null;
   private lastState: EditState | null = null;
   private landmarks: DetectedLandmarkSet | null = null;
+  private readonly unsubAssets: () => void;
 
   constructor(private readonly maxEdge = DEFAULT_MAX_EDGE) {
     this.backing = document.createElement('canvas');
@@ -64,6 +67,11 @@ export class RenderOrchestrator {
         this.srcTex = this.gl.uploadImage(this.original.bitmap);
         if (this.lastState) this.render(this.lastState);
       }
+    });
+
+    // Re-composite once a deferred overlay asset (sticker/blend image) decodes.
+    this.unsubAssets = onAssetLoad(() => {
+      if (this.lastState) this.render(this.lastState);
     });
   }
 
@@ -194,6 +202,19 @@ export class RenderOrchestrator {
       }
     }
 
+    // Phase 3 overlay layers, composited in output space. Skipped while holding
+    // the pure original (compare) since that view is pre-edit by definition.
+    if (this.compare !== 'hold-original' && state.layers.length > 0) {
+      drawLayers(this.view2d, state.layers, {
+        outW,
+        outH,
+        landmarks: this.landmarks,
+        imageWidth: this.original.width,
+        imageHeight: this.original.height,
+        mapSrc: (pt) => mapSourceToOutput(pt, crop),
+      });
+    }
+
     if (this.overlay) this.overlay(this.view2d, outW, outH);
   }
 
@@ -219,6 +240,7 @@ export class RenderOrchestrator {
   }
 
   dispose(): void {
+    this.unsubAssets();
     this.ping?.dispose();
     if (this.srcTex) this.gl.deleteTexture(this.srcTex);
     this.srcTex = null;

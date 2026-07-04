@@ -9,6 +9,7 @@
 import { renderFullResolution } from './tiler';
 import { encodeJpeg, encodePng } from './encode';
 import { deliver } from './deliver';
+import { rasterizeLayers } from './rasterizeLayers';
 import { croppedOutputSize } from '@/engine/render/geometry';
 import { centeredRectForRatio, ratioFor } from '@/shared/aspectRatios';
 import { defaultCrop } from '@/engine/editState';
@@ -52,6 +53,23 @@ export async function runExport(
     exportCrop,
     job.onProgress,
     landmarks,
+  );
+
+  // Rasterize creative Layers (makeup/text/stickers/frames/blend/doodle) onto
+  // the full-resolution pixels — same routine as the preview (FR-309).
+  const effectiveCrop =
+    exportCrop ??
+    ((editState.operations.find((o) => o.type === 'crop' && o.enabled)?.params as CropParams) ??
+      defaultCrop());
+  await rasterizeLayers(
+    rgba,
+    width,
+    height,
+    editState,
+    effectiveCrop,
+    landmarks ?? null,
+    original.width,
+    original.height,
   );
 
   // Transparent background requires the lossless (alpha) PNG path (T078, FR-211).

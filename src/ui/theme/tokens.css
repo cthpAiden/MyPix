@@ -81,9 +81,66 @@ textarea,
   user-select: text;
 }
 
+/* Content-shaped skeleton shimmer + darkroom "developing" print grain (T099).
+   Both are neutralized by the reduced-motion rule below. */
+@keyframes mp-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes mp-grain {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(0, 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-1.5%, 1%);
+  }
+}
+
+.mp-skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-2) 30%,
+    var(--color-surface-3) 50%,
+    var(--color-surface-2) 70%
+  );
+  background-size: 200% 100%;
+  animation: mp-shimmer 1.4s ease-in-out infinite;
+}
+
+/* Gift date-accent sparkle (T100). */
+@keyframes mp-sparkle {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.mp-sparkle {
+  display: inline-block;
+  animation: mp-sparkle 2.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+  /* Skeletons animate colour, not motion — but keep them from strobing. */
+  .mp-skeleton {
+    animation: none !important;
+    background-position: 0 0;
   }
 }

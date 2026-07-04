@@ -10,6 +10,7 @@ import { FilterIcon } from '@/ui/icons';
 import { Chip } from '@/ui/primitives';
 import { ScrubPanel } from '@/ui/ScrubPanel';
 import { useEditState } from '@/ui/useEngine';
+import { useUnlocks } from '@/ui/gift';
 import { applyOpParam, removeOp } from '@/shared/ops';
 import { loadFilters, type FilterDef } from '@/shared/filterIndex';
 import type { FilterParams } from '@/engine/editState';
@@ -18,6 +19,7 @@ import type { ToolContext, ToolModule } from '@/ui/toolModule';
 function FiltersPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations();
   const state = useEditState(ctx.engine);
+  const { has } = useUnlocks();
   const [filters, setFilters] = useState<FilterDef[]>([]);
   const [showIntensity, setShowIntensity] = useState(false);
 
@@ -29,6 +31,13 @@ function FiltersPanel({ ctx }: { ctx: ToolContext }) {
     | FilterParams
     | undefined;
   const currentId = current?.filterId ?? 'none';
+
+  // Secret (gift-unlocked) filters stay hidden until discovered — but a secret
+  // look that is already applied stays visible so it can be tuned/removed.
+  const visibleFilters = useMemo(
+    () => filters.filter((f) => !f.secret || has(f.id) || f.id === currentId),
+    [filters, has, currentId],
+  );
 
   const onPick = (id: string) => {
     if (id === 'none') {
@@ -66,7 +75,7 @@ function FiltersPanel({ ctx }: { ctx: ToolContext }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
-        {filters.map((f) => (
+        {visibleFilters.map((f) => (
           <Chip key={f.id} active={f.id === currentId} onClick={() => onPick(f.id)}>
             {t(f.nameKey)}
           </Chip>

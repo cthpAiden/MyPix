@@ -262,6 +262,21 @@ export class GLContext {
   deleteTexture(tex: WebGLTexture): void {
     this.gl.deleteTexture(tex);
   }
+
+  /**
+   * Release this context's GPU resources and drop the underlying WebGL context.
+   * The export path spins up a throwaway context per run; without this, repeated
+   * full-resolution exports would accumulate live contexts and hit the iOS
+   * concurrent-context limit, forcing context loss / crashes (SC-011, SC-012).
+   * The single shared preview context is never disposed — it lives for the app.
+   */
+  dispose(): void {
+    const { gl } = this;
+    for (const prog of this.programs.values()) gl.deleteProgram(prog);
+    this.programs.clear();
+    gl.deleteVertexArray(this.emptyVao);
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+  }
 }
 
 /**

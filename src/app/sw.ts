@@ -34,7 +34,8 @@ const serwist = new Serwist({
         url.pathname.startsWith('/models/') ||
         url.pathname.startsWith('/mediapipe/') ||
         url.pathname.startsWith('/filters/') ||
-        url.pathname.startsWith('/stickers/'),
+        url.pathname.startsWith('/stickers/') ||
+        url.pathname.startsWith('/frames/'),
       handler: assetCache,
     },
     ...defaultCache,

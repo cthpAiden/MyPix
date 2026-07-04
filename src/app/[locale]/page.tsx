@@ -14,7 +14,9 @@ import { latestDraft } from '@/persistence/drafts';
 import { Button } from '@/ui/primitives';
 import { LocaleToggle } from '@/ui/LocaleToggle';
 import { ResumeCard } from '@/ui/ResumeCard';
+import { ResumeCardSkeleton } from '@/ui/Skeleton';
 import { InstallGuide } from '@/ui/InstallGuide';
+import { HiddenNote, GiftAccent } from '@/ui/gift';
 import { ImportIcon } from '@/ui/icons';
 import type { Draft } from '@/persistence/types';
 
@@ -22,11 +24,14 @@ export default function Home() {
   const t = useTranslations();
   const router = useRouter();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [draftLoading, setDraftLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    latestDraft().then(setDraft);
+    latestDraft()
+      .then(setDraft)
+      .finally(() => setDraftLoading(false));
   }, []);
 
   const openEditor = () => router.push('/edit');
@@ -50,9 +55,13 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col overflow-y-auto">
       <header className="flex items-center justify-between px-5 py-4">
-        <span className="text-lg font-semibold tracking-tight text-ink">{t('home.title')}</span>
+        <HiddenNote>
+          <span className="text-lg font-semibold tracking-tight text-ink">{t('home.title')}</span>
+        </HiddenNote>
         <LocaleToggle />
       </header>
+
+      <GiftAccent />
 
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-5 px-5 pb-8">
         <div className="text-center">
@@ -63,13 +72,17 @@ export default function Home() {
           <p className="mt-1 text-sm text-ink-mute">{t('home.subtitle')}</p>
         </div>
 
-        {draft && (
-          <ResumeCard
-            draft={draft}
-            engine={getEngine()}
-            onResumed={openEditor}
-            onDiscard={() => setDraft(null)}
-          />
+        {draftLoading ? (
+          <ResumeCardSkeleton />
+        ) : (
+          draft && (
+            <ResumeCard
+              draft={draft}
+              engine={getEngine()}
+              onResumed={openEditor}
+              onDiscard={() => setDraft(null)}
+            />
+          )
         )}
 
         <div className="flex flex-col gap-2">
@@ -78,6 +91,9 @@ export default function Home() {
           </Button>
           <Button onPointerDown={() => doImport(true)} disabled={busy} className="py-3">
             {t('import.takePhoto')}
+          </Button>
+          <Button onPointerDown={() => router.push('/collage')} disabled={busy} className="py-3">
+            {t('home.collageCta')}
           </Button>
           {error && <p className="text-center text-sm text-danger">{error}</p>}
           <p className="mt-1 text-center text-xs text-ink-faint">{t('home.importHint')}</p>

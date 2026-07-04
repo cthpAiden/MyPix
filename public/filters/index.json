@@ -7,6 +7,7 @@
     { "id": "noir", "category": "mono", "nameKey": "tools.filters.items.noir", "adjust": { "saturation": -100, "contrast": 24, "blacks": -10 } },
     { "id": "faded", "category": "matte", "nameKey": "tools.filters.items.faded", "adjust": { "contrast": -14, "saturation": -12, "blacks": 18, "whites": -8 } },
     { "id": "goldenhour", "category": "warm", "nameKey": "tools.filters.items.goldenhour", "adjust": { "temperature": 18, "tint": 6, "vibrance": 14, "highlights": 8 } },
-    { "id": "azure", "category": "cool", "nameKey": "tools.filters.items.azure", "adjust": { "temperature": -16, "tint": -4, "saturation": 6, "shadows": 8 } }
+    { "id": "azure", "category": "cool", "nameKey": "tools.filters.items.azure", "adjust": { "temperature": -16, "tint": -4, "saturation": 6, "shadows": 8 } },
+    { "id": "firstlight", "category": "warm", "nameKey": "tools.filters.items.firstlight", "secret": true, "adjust": { "temperature": 12, "tint": 4, "highlights": 6, "shadows": 14, "vibrance": 10, "blacks": 6, "sharpness": 4 } }
   ]
 }

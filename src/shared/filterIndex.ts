@@ -11,6 +11,8 @@ export interface FilterDef {
   category: string;
   nameKey: string;
   adjust: Partial<AdjustParams>;
+  /** Hidden until unlocked via the gift layer (settings.unlocks); T100. */
+  secret?: boolean;
 }
 
 let cache: FilterDef[] | null = null;

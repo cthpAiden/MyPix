@@ -8,6 +8,7 @@
 import { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button, Chip, Segmented } from '@/ui/primitives';
+import { DevelopingReveal } from '@/ui/DevelopingReveal';
 import { CloseIcon, DownloadIcon, ShareIcon } from '@/ui/icons';
 import { ASPECT_RATIOS } from '@/shared/aspectRatios';
 import type { Engine } from '@/engine';
@@ -32,11 +33,18 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
   const [transparent, setTransparent] = useState(canTransparent);
   const [progress, setProgress] = useState<number | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [thumb, setThumb] = useState<string | null>(null);
 
   const run = useCallback(
     async (delivery: 'share' | 'download') => {
       setProgress(0);
       setMessage(null);
+      // Snapshot the current preview so it can "develop" during the export.
+      try {
+        setThumb(engine.getPreviewCanvas().toDataURL('image/jpeg', 0.6));
+      } catch {
+        setThumb(null);
+      }
       try {
         const result = await engine.export({
           format: transparent ? 'png' : format,
@@ -126,15 +134,11 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
           )}
 
           {developing ? (
-            <div className="py-2">
-              <p className="mb-2 text-center text-sm text-safelight">{t('export.developing')}</p>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-3">
-                <div
-                  className="h-full bg-safelight transition-[width]"
-                  style={{ width: `${Math.round((progress ?? 0) * 100)}%` }}
-                />
-              </div>
-            </div>
+            <DevelopingReveal
+              progress={progress ?? 0}
+              thumbnail={thumb}
+              label={t('export.developing')}
+            />
           ) : (
             <div className="flex gap-2">
               <Button variant="primary" onPointerDown={() => run('share')} className="flex-1 py-3">

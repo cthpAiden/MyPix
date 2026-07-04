@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "frames": [
+    { "id": "border", "style": "border", "width": 0.04, "color": "#f4efe6" },
+    { "id": "filmstrip", "style": "filmstrip", "width": 0.06, "color": "#111114" },
+    { "id": "instant", "style": "instant", "width": 0.05, "color": "#f7f4ee" }
+  ]
+}

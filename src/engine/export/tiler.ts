@@ -48,56 +48,62 @@ export async function renderFullResolution(
 
   const backing = createCanvas(out.width, out.height);
   const gl = new GLContext(backing);
-  const max = gl.gl.getParameter(gl.gl.MAX_TEXTURE_SIZE) as number;
-  if (original.width > max || original.height > max || out.width > max || out.height > max) {
-    throw new Error(`export: dimension exceeds MAX_TEXTURE_SIZE (${max})`);
-  }
-
-  // 1. Pixel passes at full source resolution (identical pipeline to preview).
-  const srcTex = gl.uploadImage(original.bitmap);
-  const ping = new PingPong(gl, original.width, original.height);
-  const texel: [number, number] = [1 / original.width, 1 / original.height];
-  const ctx: RenderContext = {
-    landmarks: landmarks ?? null,
-    imageWidth: original.width,
-    imageHeight: original.height,
-  };
-  const passes = buildPipeline(editState, ctx);
-  const edited = runPixelPasses(gl, srcTex, passes, ping, texel);
-
-  // 2. Geometry into the full-resolution output (default framebuffer of `backing`).
-  gl.resizeCanvas(out.width, out.height);
-  const geom = buildGeometryPass(crop, original.width / original.height);
-  gl.draw(
-    geom.fragment,
-    {
-      u_src: { t: 'tex', v: edited, unit: 0 },
-      u_texel: { t: '2f', v: texel },
-      ...geom.uniforms({ fbo: null as never, tex: edited, width: out.width, height: out.height }),
-    },
-    null,
-    { width: out.width, height: out.height },
-  );
-
-  // 3. Read back in bands, flipping GL's bottom-up rows to top-down.
-  const rgba = new Uint8ClampedArray(out.width * out.height * 4);
-  const rowBytes = out.width * 4;
-  const band = new Uint8Array(out.width * READ_BAND * 4);
-  const glCtx = gl.gl;
-  for (let y = 0; y < out.height; y += READ_BAND) {
-    const rows = Math.min(READ_BAND, out.height - y);
-    glCtx.readPixels(0, y, out.width, rows, glCtx.RGBA, glCtx.UNSIGNED_BYTE, band);
-    for (let r = 0; r < rows; r++) {
-      const glRow = y + r;
-      const dstRow = out.height - 1 - glRow; // flip vertically
-      rgba.set(band.subarray(r * rowBytes, (r + 1) * rowBytes), dstRow * rowBytes);
+  let ping: PingPong | null = null;
+  let srcTex: WebGLTexture | null = null;
+  try {
+    const max = gl.gl.getParameter(gl.gl.MAX_TEXTURE_SIZE) as number;
+    if (original.width > max || original.height > max || out.width > max || out.height > max) {
+      throw new Error(`export: dimension exceeds MAX_TEXTURE_SIZE (${max})`);
     }
-    onProgress?.(Math.min(y + rows, out.height), out.height);
+
+    // 1. Pixel passes at full source resolution (identical pipeline to preview).
+    srcTex = gl.uploadImage(original.bitmap);
+    ping = new PingPong(gl, original.width, original.height);
+    const texel: [number, number] = [1 / original.width, 1 / original.height];
+    const ctx: RenderContext = {
+      landmarks: landmarks ?? null,
+      imageWidth: original.width,
+      imageHeight: original.height,
+    };
+    const passes = buildPipeline(editState, ctx);
+    const edited = runPixelPasses(gl, srcTex, passes, ping, texel);
+
+    // 2. Geometry into the full-resolution output (default framebuffer of `backing`).
+    gl.resizeCanvas(out.width, out.height);
+    const geom = buildGeometryPass(crop, original.width / original.height);
+    gl.draw(
+      geom.fragment,
+      {
+        u_src: { t: 'tex', v: edited, unit: 0 },
+        u_texel: { t: '2f', v: texel },
+        ...geom.uniforms({ fbo: null as never, tex: edited, width: out.width, height: out.height }),
+      },
+      null,
+      { width: out.width, height: out.height },
+    );
+
+    // 3. Read back in bands, flipping GL's bottom-up rows to top-down.
+    const rgba = new Uint8ClampedArray(out.width * out.height * 4);
+    const rowBytes = out.width * 4;
+    const band = new Uint8Array(out.width * READ_BAND * 4);
+    const glCtx = gl.gl;
+    for (let y = 0; y < out.height; y += READ_BAND) {
+      const rows = Math.min(READ_BAND, out.height - y);
+      glCtx.readPixels(0, y, out.width, rows, glCtx.RGBA, glCtx.UNSIGNED_BYTE, band);
+      for (let r = 0; r < rows; r++) {
+        const glRow = y + r;
+        const dstRow = out.height - 1 - glRow; // flip vertically
+        rgba.set(band.subarray(r * rowBytes, (r + 1) * rowBytes), dstRow * rowBytes);
+      }
+      onProgress?.(Math.min(y + rows, out.height), out.height);
+    }
+
+    return { rgba, width: out.width, height: out.height };
+  } finally {
+    // Free GPU resources and drop the throwaway context even on failure, so
+    // repeated exports never accumulate live WebGL contexts (memory ceiling).
+    ping?.dispose();
+    if (srcTex) gl.deleteTexture(srcTex);
+    gl.dispose();
   }
-
-  // Cleanup GPU resources promptly (memory ceiling).
-  ping.dispose();
-  gl.deleteTexture(srcTex);
-
-  return { rgba, width: out.width, height: out.height };
 }

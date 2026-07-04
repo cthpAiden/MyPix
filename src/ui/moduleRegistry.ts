@@ -18,6 +18,13 @@ import { targetedModule } from '@/modules/face/targeted';
 import { bodyModule } from '@/modules/body';
 import { warpModule } from '@/modules/warp';
 import { backgroundModule } from '@/modules/background';
+import { makeupModule } from '@/modules/makeup';
+import { textModule } from '@/modules/text';
+import { stickersModule } from '@/modules/stickers';
+import { framesModule } from '@/modules/frames';
+import { retouchModule } from '@/modules/retouch';
+import { blendModule } from '@/modules/blend';
+import { drawModule } from '@/modules/draw';
 import type { ToolModule } from './toolModule';
 
 export const toolModules: ToolModule[] = [
@@ -37,4 +44,12 @@ export const toolModules: ToolModule[] = [
   bodyModule,
   warpModule,
   backgroundModule,
+  // Phase 3 — creative & makeup layer
+  makeupModule,
+  textModule,
+  stickersModule,
+  framesModule,
+  retouchModule,
+  blendModule,
+  drawModule,
 ];

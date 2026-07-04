@@ -25,6 +25,7 @@
     "subtitle": "Một phòng tối nhỏ, của riêng bạn.",
     "importCta": "Chọn một tấm ảnh",
     "takePhoto": "Chụp một tấm ảnh",
+    "collageCta": "Tạo ảnh ghép",
     "importHint": "Mọi thứ diễn ra ngay trên máy của bạn. Không gì được tải lên cả.",
     "giftNote": "Làm bằng cả tấm lòng."
   },
@@ -82,6 +83,13 @@
     "body": "Dáng người",
     "warp": "Bóp méo",
     "background": "Nền",
+    "makeup": "Trang điểm",
+    "text": "Chữ",
+    "stickers": "Nhãn dán",
+    "frames": "Khung",
+    "retouch": "Dặm vá",
+    "blend": "Hoà ảnh",
+    "draw": "Vẽ",
     "compare": "So sánh"
   },
   "tools": {
@@ -120,7 +128,8 @@
         "noir": "Noir",
         "faded": "Phai màu",
         "goldenhour": "Giờ vàng",
-        "azure": "Thiên thanh"
+        "azure": "Thiên thanh",
+        "firstlight": "Ánh bình minh"
       }
     },
     "curves": {
@@ -246,7 +255,116 @@
       "edge": "Tinh chỉnh viền",
       "noSubject": "Không phát hiện chủ thể trong ảnh này.",
       "transparentHint": "Xuất dạng PNG để giữ nền trong suốt."
+    },
+    "makeup": {
+      "title": "Trang điểm",
+      "hint": "Lớp trang điểm tự bám theo khuôn mặt.",
+      "noFace": "Không phát hiện khuôn mặt trong ảnh này.",
+      "add": "Thêm",
+      "color": "Màu",
+      "opacity": "Độ đậm",
+      "finish": "Chất hoàn thiện",
+      "matte": "Lì",
+      "gloss": "Bóng",
+      "shimmer": "Nhũ",
+      "remove": "Xoá",
+      "empty": "Thêm chút màu sắc — lớp trang điểm tự bám theo khuôn mặt.",
+      "types": {
+        "lipstick": "Môi",
+        "blush": "Má hồng",
+        "eyeshadow": "Phấn mắt",
+        "liner": "Kẻ mắt",
+        "brow": "Chân mày"
+      }
+    },
+    "text": {
+      "title": "Chữ",
+      "placeholder": "Nhập nội dung…",
+      "add": "Thêm chữ",
+      "font": "Phông chữ",
+      "size": "Cỡ chữ",
+      "color": "Màu",
+      "align": "Canh lề",
+      "outline": "Viền chữ",
+      "shadow": "Đổ bóng",
+      "rotation": "Xoay",
+      "remove": "Xoá",
+      "empty": "Thêm chữ tiếng Việt hay tiếng Anh — mọi dấu thanh đều hiển thị rõ.",
+      "hint": "Kéo trên ảnh để di chuyển đoạn chữ đang chọn."
+    },
+    "stickers": {
+      "title": "Nhãn dán",
+      "size": "Kích cỡ",
+      "rotation": "Xoay",
+      "opacity": "Độ mờ",
+      "remove": "Xoá",
+      "empty": "Chưa có nhãn dán — thả ảnh vào thư viện nhãn dán để bổ sung.",
+      "hint": "Kéo trên ảnh để di chuyển nhãn dán đang chọn."
+    },
+    "frames": {
+      "title": "Khung",
+      "none": "Không",
+      "border": "Viền",
+      "filmstrip": "Dải phim",
+      "instant": "Ảnh lấy liền",
+      "width": "Độ dày",
+      "color": "Màu",
+      "remove": "Bỏ khung"
+    },
+    "retouch": {
+      "title": "Dặm vá",
+      "clone": "Nhân bản",
+      "heal": "Vá lành",
+      "setSource": "Chọn điểm nguồn",
+      "sourceHint": "Chạm vào ảnh để chọn nơi cần sao chép.",
+      "brushHint": "Giờ hãy tô lên vùng cần sửa.",
+      "needSource": "Hãy chọn điểm nguồn trước.",
+      "size": "Cỡ cọ",
+      "hardness": "Độ cứng",
+      "clear": "Xoá tất cả"
+    },
+    "blend": {
+      "title": "Hoà ảnh",
+      "choose": "Chọn tấm ảnh thứ hai",
+      "mode": "Chế độ hoà",
+      "opacity": "Độ mờ",
+      "remove": "Xoá",
+      "empty": "Hoà một tấm ảnh thứ hai lên trên để tạo hiệu ứng phơi kép.",
+      "modes": {
+        "normal": "Thường",
+        "multiply": "Nhân",
+        "screen": "Màn",
+        "overlay": "Phủ",
+        "softLight": "Sáng dịu",
+        "hardLight": "Sáng gắt",
+        "darken": "Tối hoá",
+        "lighten": "Sáng hoá"
+      }
+    },
+    "draw": {
+      "title": "Vẽ",
+      "color": "Màu",
+      "size": "Cỡ cọ",
+      "opacity": "Độ mờ",
+      "undo": "Hoàn tác nét",
+      "clear": "Xoá",
+      "hint": "Vẽ tự do lên ảnh."
     }
+  },
+  "collage": {
+    "title": "Ghép ảnh",
+    "layout": "Bố cục",
+    "spacing": "Khoảng cách",
+    "radius": "Bo góc",
+    "background": "Nền",
+    "addPhoto": "Thêm ảnh",
+    "export": "Xuất ảnh ghép",
+    "empty": "Thêm ảnh rồi sắp xếp vào một bố cục.",
+    "cellHint": "Chạm vào ô để đổ hoặc thay ảnh.",
+    "developing": "Đang rửa ảnh…",
+    "saved": "Đã lưu ở độ phân giải đầy đủ",
+    "shareFailed": "Không thể chia sẻ — đã lưu về máy của bạn.",
+    "back": "Quay lại"
   },
   "resume": {
     "title": "Tiếp tục chỗ đang làm dở?",
@@ -283,7 +401,11 @@
     "retry": "Thử lại"
   },
   "gift": {
-    "hiddenNote": "Dành cho bạn — mỗi tấm ảnh bạn tạo ở đây đều đã đẹp sẵn, vì nó là của bạn."
+    "hiddenNote": "Dành cho bạn — mỗi tấm ảnh bạn tạo ở đây đều đã đẹp sẵn, vì nó là của bạn.",
+    "secretUnlocked": "Một hiệu ứng ẩn vừa hiện ra: {name}.",
+    "close": "Đóng",
+    "greetingNewYear": "Chúc mừng năm mới",
+    "greetingSeason": "Chúc mùa lễ an lành"
   },
   "a11y": {
     "localeToggle": "Đổi ngôn ngữ",

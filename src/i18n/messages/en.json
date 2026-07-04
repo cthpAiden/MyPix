@@ -25,6 +25,7 @@
     "subtitle": "A little darkroom, just for you.",
     "importCta": "Choose a photo",
     "takePhoto": "Take a photo",
+    "collageCta": "Make a collage",
     "importHint": "Everything happens on your phone. Nothing is ever uploaded.",
     "giftNote": "Made with love."
   },
@@ -82,6 +83,13 @@
     "body": "Body",
     "warp": "Liquify",
     "background": "Background",
+    "makeup": "Makeup",
+    "text": "Text",
+    "stickers": "Stickers",
+    "frames": "Frames",
+    "retouch": "Repair",
+    "blend": "Blend",
+    "draw": "Draw",
     "compare": "Compare"
   },
   "tools": {
@@ -120,7 +128,8 @@
         "noir": "Noir",
         "faded": "Faded",
         "goldenhour": "Golden Hour",
-        "azure": "Azure"
+        "azure": "Azure",
+        "firstlight": "First Light"
       }
     },
     "curves": {
@@ -246,7 +255,116 @@
       "edge": "Edge refine",
       "noSubject": "No subject detected in this photo.",
       "transparentHint": "Export as PNG to keep the transparency."
+    },
+    "makeup": {
+      "title": "Makeup",
+      "hint": "Makeup follows the face automatically.",
+      "noFace": "No face detected in this photo.",
+      "add": "Add",
+      "color": "Colour",
+      "opacity": "Amount",
+      "finish": "Finish",
+      "matte": "Matte",
+      "gloss": "Gloss",
+      "shimmer": "Shimmer",
+      "remove": "Remove",
+      "empty": "Add a touch of colour — it tracks the face on its own.",
+      "types": {
+        "lipstick": "Lips",
+        "blush": "Blush",
+        "eyeshadow": "Eyeshadow",
+        "liner": "Eyeliner",
+        "brow": "Brows"
+      }
+    },
+    "text": {
+      "title": "Text",
+      "placeholder": "Type something…",
+      "add": "Add text",
+      "font": "Font",
+      "size": "Size",
+      "color": "Colour",
+      "align": "Align",
+      "outline": "Outline",
+      "shadow": "Shadow",
+      "rotation": "Rotation",
+      "remove": "Remove",
+      "empty": "Add words in English or Vietnamese — every tone mark renders cleanly.",
+      "hint": "Drag on the photo to move the selected text."
+    },
+    "stickers": {
+      "title": "Stickers",
+      "size": "Size",
+      "rotation": "Rotation",
+      "opacity": "Opacity",
+      "remove": "Remove",
+      "empty": "No stickers yet — drop images into the sticker library to grow it.",
+      "hint": "Drag on the photo to move the selected sticker."
+    },
+    "frames": {
+      "title": "Frames",
+      "none": "None",
+      "border": "Border",
+      "filmstrip": "Film strip",
+      "instant": "Instant",
+      "width": "Width",
+      "color": "Colour",
+      "remove": "Remove frame"
+    },
+    "retouch": {
+      "title": "Repair",
+      "clone": "Clone",
+      "heal": "Heal",
+      "setSource": "Set source point",
+      "sourceHint": "Tap the photo to pick where to copy from.",
+      "brushHint": "Now paint over the area to repair.",
+      "needSource": "Pick a source point first.",
+      "size": "Brush size",
+      "hardness": "Hardness",
+      "clear": "Clear all"
+    },
+    "blend": {
+      "title": "Blend",
+      "choose": "Choose a second photo",
+      "mode": "Blend mode",
+      "opacity": "Opacity",
+      "remove": "Remove",
+      "empty": "Blend a second photo over this one for a double exposure.",
+      "modes": {
+        "normal": "Normal",
+        "multiply": "Multiply",
+        "screen": "Screen",
+        "overlay": "Overlay",
+        "softLight": "Soft light",
+        "hardLight": "Hard light",
+        "darken": "Darken",
+        "lighten": "Lighten"
+      }
+    },
+    "draw": {
+      "title": "Draw",
+      "color": "Colour",
+      "size": "Brush size",
+      "opacity": "Opacity",
+      "undo": "Undo stroke",
+      "clear": "Clear",
+      "hint": "Draw freely on the photo."
     }
+  },
+  "collage": {
+    "title": "Collage",
+    "layout": "Layout",
+    "spacing": "Spacing",
+    "radius": "Corners",
+    "background": "Background",
+    "addPhoto": "Add a photo",
+    "export": "Export collage",
+    "empty": "Add photos, then arrange them into a layout.",
+    "cellHint": "Tap a cell to fill or swap its photo.",
+    "developing": "Developing…",
+    "saved": "Saved at full resolution",
+    "shareFailed": "Sharing wasn’t available — saved to your device instead.",
+    "back": "Back"
   },
   "resume": {
     "title": "Pick up where you left off?",
@@ -283,7 +401,11 @@
     "retry": "Try again"
   },
   "gift": {
-    "hiddenNote": "For you — every photo you make here is already beautiful, because it’s yours."
+    "hiddenNote": "For you — every photo you make here is already beautiful, because it’s yours.",
+    "secretUnlocked": "A hidden look appeared: {name}.",
+    "close": "Close",
+    "greetingNewYear": "Happy New Year",
+    "greetingSeason": "Season’s greetings"
   },
   "a11y": {
     "localeToggle": "Switch language",
