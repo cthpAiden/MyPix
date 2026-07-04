@@ -11,6 +11,11 @@ export interface Draft {
   fileName: string;
   thumbDataUrl: string; // ≤ ~50 KB — the one tiny allowed raster
   savedAt: number;
+  /** Encoded original photo bytes for one-tap resume. `undefined` only when a
+   *  quota failure prevented storing it — resume then degrades to re-pick. */
+  originalBlob?: Blob;
+  /** Original MIME type (e.g. image/jpeg, image/heic) for correct re-decode. */
+  mimeType: string;
 }
 
 export interface Preset {

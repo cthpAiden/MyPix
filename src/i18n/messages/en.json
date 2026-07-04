@@ -38,7 +38,8 @@
   "editor": {
     "tools": "Tools",
     "compare": "Compare",
-    "reEdit": "Reopen this step"
+    "reEdit": "Reopen this step",
+    "resetView": "Reset view"
   },
   "export": {
     "title": "Export",
@@ -372,6 +373,7 @@
     "restore": "Continue editing",
     "discard": "Start fresh",
     "pickPhoto": "Choose the same photo to continue",
+    "needPhoto": "We need that photo again — please choose it to continue.",
     "mismatchTitle": "That’s a different photo",
     "mismatchBody": "This doesn’t look like the photo you were editing. Use it anyway, or pick the original.",
     "useAnyway": "Use this photo",

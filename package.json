@@ -4,7 +4,9 @@
   "private": true,
   "description": "MyPix — a fully client-side, bilingual (EN/VI), installable PWA photo & beauty editor.",
   "scripts": {
+    "predev": "node scripts/provision-vision-assets.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/provision-vision-assets.mjs",
     "build": "next build",
     "start": "next start",
     "start:static": "serve out -l 3000",
@@ -27,10 +29,11 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.49.1",
     "@serwist/next": "^9.0.11",
     "@tailwindcss/postcss": "^4.0.0",
-    "@testing-library/react": "^16.1.0",
     "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
@@ -39,9 +42,9 @@
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.1.6",
+    "fake-indexeddb": "^6.2.5",
     "jsdom": "^25.0.1",
     "playwright": "^1.49.1",
-    "@playwright/test": "^1.49.1",
     "serve": "^14.2.4",
     "serwist": "^9.0.11",
     "tailwindcss": "^4.0.0",

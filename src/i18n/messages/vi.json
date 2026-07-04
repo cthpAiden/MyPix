@@ -38,7 +38,8 @@
   "editor": {
     "tools": "Công cụ",
     "compare": "So sánh",
-    "reEdit": "Mở lại bước này"
+    "reEdit": "Mở lại bước này",
+    "resetView": "Đặt lại khung xem"
   },
   "export": {
     "title": "Xuất ảnh",
@@ -372,6 +373,7 @@
     "restore": "Tiếp tục chỉnh",
     "discard": "Bắt đầu mới",
     "pickPhoto": "Chọn lại đúng tấm ảnh để tiếp tục",
+    "needPhoto": "Cần lại tấm ảnh đó — hãy chọn ảnh để tiếp tục.",
     "mismatchTitle": "Đây là một tấm ảnh khác",
     "mismatchBody": "Ảnh này không giống tấm bạn đang chỉnh. Vẫn dùng ảnh này, hoặc chọn lại ảnh gốc.",
     "useAnyway": "Dùng ảnh này",

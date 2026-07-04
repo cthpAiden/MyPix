@@ -63,11 +63,25 @@ export async function saveDraftNow(engine: Engine): Promise<WriteOutcome> {
     fileName: project.original.fileName,
     thumbDataUrl: makeThumb(engine.getPreviewCanvas()),
     savedAt: Date.now(),
+    originalBlob: engine.getSourceBlob() ?? undefined,
+    mimeType: project.original.mimeType,
   };
-  return guardedWrite(async () => {
+  const outcome = await guardedWrite(async () => {
     const db = await getDB();
     await db.put('drafts', draft);
   });
+  // Retain exactly one draft (most-recent): after a successful write, delete
+  // every other record. Pruning failures are non-fatal (R5).
+  if (outcome.ok) {
+    try {
+      const db = await getDB();
+      const keys = await db.getAllKeys('drafts');
+      await Promise.all(keys.filter((k) => k !== draft.id).map((k) => db.delete('drafts', k)));
+    } catch {
+      /* pruning is best-effort */
+    }
+  }
+  return outcome;
 }
 
 /**

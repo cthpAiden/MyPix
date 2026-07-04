@@ -20,7 +20,8 @@ import { Compare } from '@/ui/Compare';
 import { LocaleToggle } from '@/ui/LocaleToggle';
 import { PrecisionLoupe } from '@/ui/PrecisionLoupe';
 import { Readout, IconButton } from '@/ui/primitives';
-import { UndoIcon, RedoIcon, ExportIcon, CloseIcon } from '@/ui/icons';
+import { useViewport } from '@/ui/useViewport';
+import { UndoIcon, RedoIcon, ExportIcon, CloseIcon, FitIcon } from '@/ui/icons';
 import { toolModules } from '@/ui/moduleRegistry';
 import { attachAutosave } from '@/persistence/drafts';
 import { useUI } from '@/ui/AppShell';
@@ -74,9 +75,7 @@ function Editor({ engine }: { engine: Engine }) {
     const host = canvasHostRef.current;
     if (!host) return;
     const canvas = engine.getPreviewCanvas();
-    canvas.style.maxWidth = '100%';
-    canvas.style.maxHeight = '100%';
-    canvas.style.objectFit = 'contain';
+    // Sizing + transform are owned by useViewport (whole-photo margin fit + zoom).
     canvas.style.touchAction = 'none';
     host.appendChild(canvas);
     engine.renderPreview();
@@ -180,6 +179,15 @@ function Editor({ engine }: { engine: Engine }) {
     },
   };
 
+  // View-only zoom/pan/reset layer: multi-touch drives the viewport, single
+  // pointer delegates to the scrub/pick/brush handlers above (FR-014…FR-020).
+  const viewport = useViewport({
+    container: canvasHostRef,
+    canvas: engine.getPreviewCanvas(),
+    fallback: photoHandlers,
+    reducedMotion,
+  });
+
   const activeModule = toolModules.find((m) => m.id === activeTool) ?? toolModules[0];
   const landmarks = engine.getLandmarks();
   const ctx = useMemo(() => ({ engine, landmarks, locale }), [engine, landmarks, locale]);
@@ -218,10 +226,24 @@ function Editor({ engine }: { engine: Engine }) {
 
         <div
           ref={canvasHostRef}
-          {...photoHandlers}
+          {...viewport.handlers}
           className="relative flex min-h-0 flex-1 select-none items-center justify-center overflow-hidden px-2"
           style={{ touchAction: 'none', paddingBottom: `${SHEET_PEEK_FRACTION * 100}dvh` }}
         >
+          {viewport.isZoomed && (
+            <div className="pointer-events-none absolute right-3 top-3 z-10">
+              <IconButton
+                label={t('editor.resetView')}
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  viewport.reset();
+                }}
+                className="pointer-events-auto bg-black/40 backdrop-blur"
+              >
+                <FitIcon />
+              </IconButton>
+            </div>
+          )}
           {scrub.isScrubbing && (
             <div className="pointer-events-none absolute inset-x-0 top-6 flex justify-center">
               <div className="rounded-2xl bg-black/40 px-6 py-3 backdrop-blur">

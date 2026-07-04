@@ -68,6 +68,9 @@ function blendAssetIds(state: EditState): string[] {
 
 export class Engine {
   private project: Project | null = null;
+  /** Encoded source bytes of the open photo, retained so the draft store can
+   *  persist the original for one-tap resume (contracts/persistence-draft.md). */
+  private sourceBlob: Blob | null = null;
   private state: EditState = emptyEditState();
   private history = new HistoryRing(this.state);
   private readonly orchestrator = new RenderOrchestrator();
@@ -83,6 +86,11 @@ export class Engine {
 
   getProject(): Project | null {
     return this.project;
+  }
+
+  /** Encoded source bytes of the open photo (for draft persistence), or null. */
+  getSourceBlob(): Blob | null {
+    return this.sourceBlob;
   }
 
   subscribe(fn: Listener): Unsubscribe {
@@ -223,6 +231,9 @@ export class Engine {
     const now = Date.now();
     const project: Project = { id: newId('proj'), original, createdAt: now, modifiedAt: now };
     this.project = project;
+    // Cleared by default; the blob-bearing callers (importPhoto/restoreDraft)
+    // set it after this returns. adoptPhoto (re-pick relink) has no source blob.
+    this.sourceBlob = null;
     this.state = state;
     this.history.reset(state);
     this.landmarkCache.clear();
@@ -236,14 +247,18 @@ export class Engine {
   async importPhoto(source: File | Blob): Promise<Project> {
     const { decodePhoto } = await import('./import/decode');
     const original = await decodePhoto(source);
-    return this.openProject(original, emptyEditState());
+    const project = this.openProject(original, emptyEditState());
+    this.sourceBlob = source;
+    return project;
   }
 
   /** Re-link a draft to a re-picked file (fingerprint checked by the caller). */
   async restoreDraft(state: EditState, refile: File | Blob): Promise<Project> {
     const { decodePhoto } = await import('./import/decode');
     const original = await decodePhoto(refile);
-    return this.openProject(original, state);
+    const project = this.openProject(original, state);
+    this.sourceBlob = refile;
+    return project;
   }
 
   /** Open a project from an already-decoded image + edit state (resume flow). */
@@ -253,6 +268,7 @@ export class Engine {
 
   closeProject(): void {
     this.project = null;
+    this.sourceBlob = null;
     this.state = emptyEditState();
     this.history.reset(this.state);
     this.orchestrator.clearProject();

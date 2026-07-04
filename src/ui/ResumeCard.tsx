@@ -30,11 +30,31 @@ export function ResumeCard({
   const locale = useLocale();
   const [mismatch, setMismatch] = useState<OriginalImage | null>(null);
   const [busy, setBusy] = useState(false);
+  const [needPhoto, setNeedPhoto] = useState(false);
 
   const when = new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(draft.savedAt));
+
+  // Primary "Continue editing": one tap resumes from the stored original with no
+  // picker. Missing/undecodable original degrades to the re-pick fallback.
+  const restore = async () => {
+    if (draft.originalBlob) {
+      setBusy(true);
+      try {
+        await engine.restoreDraft(draft.editState, draft.originalBlob);
+        onResumed();
+        return;
+      } catch {
+        // corrupt/evicted bytes — fall through to re-pick
+      } finally {
+        setBusy(false);
+      }
+    }
+    setNeedPhoto(true);
+    await pick();
+  };
 
   const pick = async () => {
     const file = await pickFromLibrary();
@@ -95,16 +115,21 @@ export function ResumeCard({
           </div>
         </div>
       ) : (
-        <div className="flex gap-2">
-          <Button variant="primary" onPointerDown={pick} disabled={busy}>
-            {t('restore')}
-          </Button>
-          <Button variant="danger" onPointerDown={discard}>
-            {t('discard')}
-          </Button>
+        <div className="flex flex-col gap-2">
+          {needPhoto && <p className="text-xs text-ink-mute">{t('needPhoto')}</p>}
+          <div className="flex gap-2">
+            <Button variant="primary" onPointerDown={restore} disabled={busy}>
+              {t('restore')}
+            </Button>
+            <Button variant="danger" onPointerDown={discard}>
+              {t('discard')}
+            </Button>
+          </div>
         </div>
       )}
-      {!mismatch && <p className="text-xs text-ink-faint">{t('pickPhoto')}</p>}
+      {!mismatch && !draft.originalBlob && (
+        <p className="text-xs text-ink-faint">{t('pickPhoto')}</p>
+      )}
     </Surface>
   );
 }

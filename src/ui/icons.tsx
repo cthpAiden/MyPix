@@ -268,3 +268,14 @@ export const CollageIcon = (p: P) => (
     <rect x="3" y="13" width="8" height="8" rx="1" />
   </svg>
 );
+
+/** Fit-to-frame / reset view: four inward corner arrows. */
+export const FitIcon = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M9 4H4v5" />
+    <path d="M15 4h5v5" />
+    <path d="M15 20h5v-5" />
+    <path d="M9 20H4v-5" />
+    <path d="M9 9l-4-4M15 9l4-4M15 15l4 4M9 15l-4 4" />
+  </svg>
+);
