@@ -72,6 +72,39 @@ describe('reducer clamping', () => {
   });
 });
 
+describe('reducer no-op guards (no dead undo steps)', () => {
+  it('op/toggle to the same enabled value returns the same state object', () => {
+    const op = adjustOp();
+    const state = reduce(emptyEditState(), { kind: 'op/add', op });
+    const same = reduce(state, { kind: 'op/toggle', id: op.id, enabled: true });
+    expect(same).toBe(state); // enabled was already true
+  });
+
+  it('op/toggle with an unknown id returns the same state object', () => {
+    const state = reduce(emptyEditState(), { kind: 'op/add', op: adjustOp() });
+    expect(reduce(state, { kind: 'op/toggle', id: 'nope', enabled: false })).toBe(state);
+  });
+
+  it('layer/update with an unknown id returns the same state object', () => {
+    const state = emptyEditState();
+    expect(reduce(state, { kind: 'layer/update', id: 'ghost', patch: { opacity: 0.5 } })).toBe(state);
+  });
+});
+
+describe('crop clamp keeps the rect inside the image', () => {
+  it('x + w never exceeds 1 even at extreme x', () => {
+    const c = clampParams('crop', {
+      rect: { x: 0.99, y: 0.97, w: 1, h: 1 },
+      angle: 0,
+      rotate90: 0,
+      quad: null,
+      ratio: 'free',
+    });
+    expect(c.rect.x + c.rect.w).toBeLessThanOrEqual(1 + 1e-9);
+    expect(c.rect.y + c.rect.h).toBeLessThanOrEqual(1 + 1e-9);
+  });
+});
+
 describe('serialize round-trip', () => {
   it('deserialize(serialize(s)) deep-equals s', () => {
     const state: EditState = reduce(emptyEditState(), {
