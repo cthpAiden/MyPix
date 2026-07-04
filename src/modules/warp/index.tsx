@@ -22,7 +22,7 @@ type Mode = 'push' | 'freeze' | 'reconstruct';
 
 function WarpPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations('tools.warp');
-  const host = useScrubHost();
+  const { requestBrush, cancelBrush } = useScrubHost();
   const [mode, setMode] = useState<Mode>('push');
   const [size, setSize] = useState(0.4);
   const [strength, setStrength] = useState(0.5);
@@ -51,9 +51,9 @@ function WarpPanel({ ctx }: { ctx: ToolContext }) {
         ctx.engine.endGesture();
       },
     };
-    host.requestBrush(handler);
-    return () => host.cancelBrush();
-  }, [ctx.engine, host]);
+    requestBrush(handler);
+    return () => cancelBrush();
+  }, [ctx.engine, requestBrush, cancelBrush]);
 
   return (
     <div className="flex flex-col gap-3">

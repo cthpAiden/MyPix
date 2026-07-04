@@ -25,7 +25,7 @@ function strokesOf(payload: Record<string, unknown>): DoodleStroke[] {
 
 function DrawPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations('tools.draw');
-  const host = useScrubHost();
+  const { requestBrush, cancelBrush } = useScrubHost();
   const state = useEditState(ctx.engine);
   const [color, setColor] = useState('#f2a35e');
   const [size, setSize] = useState(0.3);
@@ -65,9 +65,9 @@ function DrawPanel({ ctx }: { ctx: ToolContext }) {
       },
       onEnd: () => ctx.engine.endGesture(),
     };
-    host.requestBrush(handler);
-    return () => host.cancelBrush();
-  }, [ctx.engine, host]);
+    requestBrush(handler);
+    return () => cancelBrush();
+  }, [ctx.engine, requestBrush, cancelBrush]);
 
   const undoStroke = () => {
     if (!layer) return;

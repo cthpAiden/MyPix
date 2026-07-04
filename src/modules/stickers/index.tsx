@@ -25,7 +25,7 @@ const sliderToScale = (v: number) => MIN_SCALE + v * SCALE_SPAN;
 
 function StickersPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations('tools.stickers');
-  const host = useScrubHost();
+  const { requestBrush, cancelBrush } = useScrubHost();
   const state = useEditState(ctx.engine);
   const [library, setLibrary] = useState<StickerEntry[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -49,9 +49,9 @@ function StickersPanel({ ctx }: { ctx: ToolContext }) {
       onMove: move,
       onEnd: () => ctx.engine.endGesture(),
     };
-    host.requestBrush(handler);
-    return () => host.cancelBrush();
-  }, [ctx.engine, host, selected]);
+    requestBrush(handler);
+    return () => cancelBrush();
+  }, [ctx.engine, requestBrush, cancelBrush, selected]);
 
   const place = (entry: StickerEntry) => {
     const payload: StickerPayload = {

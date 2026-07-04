@@ -32,7 +32,7 @@ function sliderToRel(v: number): number {
 
 function TextPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations('tools.text');
-  const host = useScrubHost();
+  const { requestBrush, cancelBrush } = useScrubHost();
   const state = useEditState(ctx.engine);
   const [selected, setSelected] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
@@ -55,9 +55,9 @@ function TextPanel({ ctx }: { ctx: ToolContext }) {
       onMove: move,
       onEnd: () => ctx.engine.endGesture(),
     };
-    host.requestBrush(handler);
-    return () => host.cancelBrush();
-  }, [ctx.engine, host, selected]);
+    requestBrush(handler);
+    return () => cancelBrush();
+  }, [ctx.engine, requestBrush, cancelBrush, selected]);
 
   const add = () => {
     const content = draft.trim().normalize('NFC');

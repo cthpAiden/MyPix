@@ -20,7 +20,7 @@ import type { ToolContext, ToolModule } from '@/ui/toolModule';
 
 function RetouchPanel({ ctx }: { ctx: ToolContext }) {
   const t = useTranslations('tools.retouch');
-  const host = useScrubHost();
+  const { requestBrush, cancelBrush, requestPick, cancelPick } = useScrubHost();
   useEditState(ctx.engine);
   const [mode, setMode] = useState<RetouchMode>('clone');
   const [size, setSize] = useState(0.35);
@@ -39,8 +39,8 @@ function RetouchPanel({ ctx }: { ctx: ToolContext }) {
         setSource({ x: nx, y: ny });
         setPicking(false);
       };
-      host.requestPick(cb);
-      return () => host.cancelPick();
+      requestPick(cb);
+      return () => cancelPick();
     }
     if (!source) return; // nothing to paint with yet
     const handler: BrushHandler = {
@@ -62,10 +62,9 @@ function RetouchPanel({ ctx }: { ctx: ToolContext }) {
         ctx.engine.endGesture();
       },
     };
-    host.requestBrush(handler);
-    return () => host.cancelBrush();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ctx.engine, host, picking, source]);
+    requestBrush(handler);
+    return () => cancelBrush();
+  }, [ctx.engine, requestBrush, cancelBrush, requestPick, cancelPick, picking, source]);
 
   return (
     <div className="flex flex-col gap-3">

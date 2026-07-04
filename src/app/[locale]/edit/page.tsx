@@ -88,18 +88,27 @@ function Editor({ engine }: { engine: Engine }) {
   // Debounced autosave with quota guard.
   useEffect(() => attachAutosave(engine, () => setQuotaWarn(true)), [engine]);
 
+  // Stable action callbacks so brush/pick modules can depend on THEM (not the
+  // whole `host`, whose identity churns every render via `scrub`). Depending on
+  // the unstable host in an effect that itself calls these setters produced
+  // infinite render loops ("Maximum update depth exceeded") — see ScrubPanel.
+  const requestPick = useCallback((cb: PickCallback) => setPickCb(() => cb), []);
+  const cancelPick = useCallback(() => setPickCb(null), []);
+  const requestBrush = useCallback((h: BrushHandler) => setBrushCb(() => h), []);
+  const cancelBrush = useCallback(() => setBrushCb(null), []);
+
   const host = useMemo(
     () => ({
       scrub,
       setConfig: setScrubConfig,
-      requestPick: (cb: PickCallback) => setPickCb(() => cb),
-      cancelPick: () => setPickCb(null),
+      requestPick,
+      cancelPick,
       pickActive: pickCb != null,
-      requestBrush: (h: BrushHandler) => setBrushCb(() => h),
-      cancelBrush: () => setBrushCb(null),
+      requestBrush,
+      cancelBrush,
       brushActive: brushCb != null,
     }),
-    [scrub, pickCb, brushCb],
+    [scrub, pickCb, brushCb, requestPick, cancelPick, requestBrush, cancelBrush],
   );
 
   const toNorm = useCallback(
