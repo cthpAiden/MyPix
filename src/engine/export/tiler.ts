@@ -92,7 +92,10 @@ export async function renderFullResolution(
       glCtx.readPixels(0, y, out.width, rows, glCtx.RGBA, glCtx.UNSIGNED_BYTE, band);
       for (let r = 0; r < rows; r++) {
         const glRow = y + r;
-        const dstRow = out.height - 1 - glRow; // flip vertically
+        // The framebuffer holds image-top at GL row 0 (source is uploaded
+        // unflipped), so a straight row copy yields top-down output with the
+        // photo upright — matching the preview blit (orchestrator).
+        const dstRow = glRow;
         rgba.set(band.subarray(r * rowBytes, (r + 1) * rowBytes), dstRow * rowBytes);
       }
       onProgress?.(Math.min(y + rows, out.height), out.height);

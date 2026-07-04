@@ -175,13 +175,19 @@ export class GLContext {
     return tex;
   }
 
-  /** Upload a source image/bitmap into a fresh texture (flipped to match UV origin). */
+  /**
+   * Upload a source image/bitmap into a fresh texture, UNFLIPPED: row 0 = image
+   * top = texcoord v 0, matching how landmark-derived masks / warp fields are
+   * authored (createDataTexture, "row 0 = v 0"). We deliberately do NOT use
+   * UNPACK_FLIP_Y_WEBGL here — it is ignored for ImageBitmap sources in Chromium
+   * (and inconsistent across browsers), so relying on it made the source
+   * orientation browser-dependent. The final read-out flips instead to present
+   * the photo upright (orchestrator blit + export row order), which keeps every
+   * pass, mask, crop, and overlay layer aligned to one deterministic convention.
+   */
   uploadImage(source: TexImageSource): WebGLTexture {
-    const { gl } = this;
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    const tex = this.createTexture(0, 0, source);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    return tex;
+    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, false);
+    return this.createTexture(0, 0, source);
   }
 
   createTarget(width: number, height: number): RenderTarget {

@@ -159,7 +159,14 @@ export class RenderOrchestrator {
     if (dest.width !== outW) dest.width = outW;
     if (dest.height !== outH) dest.height = outH;
     dest2d.clearRect(0, 0, outW, outH);
+    // The GL framebuffer holds the edit with image-top at v_uv.y=0, which a WebGL
+    // canvas presents at its visual bottom; flip vertically on blit so the photo
+    // reads upright. Overlay layers and the eyedropper read this upright buffer,
+    // so they stay aligned to the image without any coordinate flip of their own.
+    dest2d.save();
+    dest2d.setTransform(1, 0, 0, -1, 0, outH);
     dest2d.drawImage(this.backing, 0, 0);
+    dest2d.restore();
   }
 
   render(state: EditState): void {
