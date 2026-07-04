@@ -13,7 +13,8 @@ import { WarpIcon } from '@/ui/icons';
 import { Segmented, Button, Slider } from '@/ui/primitives';
 import { useScrubHost, type BrushHandler } from '@/ui/scrub';
 import { useEditState } from '@/ui/useEngine';
-import { applyOpParam, removeOp } from '@/shared/ops';
+import { applyOpParam, currentCrop, removeOp } from '@/shared/ops';
+import { mapOutputToSource } from '@/engine/render/geometry';
 import { cloneStrokes, makeStroke } from './liquify';
 import type { LiquifyParams, LiquifyStroke } from '@/engine/editState';
 import type { ToolContext, ToolModule } from '@/ui/toolModule';
@@ -35,15 +36,22 @@ function WarpPanel({ ctx }: { ctx: ToolContext }) {
   useEffect(() => {
     const handler: BrushHandler = {
       onStart: (nx, ny) => {
+        // Liquify strokes accumulate into the same warp field as landmark-driven
+        // face/body reshape, which is authored in full-source space; map the
+        // on-screen (cropped-output) point into source space so they align.
+        const crop = currentCrop(ctx.engine);
+        const p = mapOutputToSource({ x: nx, y: ny }, crop);
         const cur =
           (ctx.engine.findOp('liquify')?.params as LiquifyParams | undefined)?.strokes ?? [];
-        const stroke = makeStroke(cfg.current.mode, cfg.current.size, cfg.current.strength, nx, ny);
+        const stroke = makeStroke(cfg.current.mode, cfg.current.size, cfg.current.strength, p.x, p.y);
+        stroke.radius *= crop.rect.w;
         working.current = [...cloneStrokes(cur), stroke];
         applyOpParam(ctx.engine, 'liquify', { strokes: working.current }, 'liquify-stroke');
       },
       onMove: (nx, ny) => {
         if (!working.current) return;
-        working.current[working.current.length - 1].path.push({ x: nx, y: ny });
+        const p = mapOutputToSource({ x: nx, y: ny }, currentCrop(ctx.engine));
+        working.current[working.current.length - 1].path.push({ x: p.x, y: p.y });
         applyOpParam(ctx.engine, 'liquify', { strokes: cloneStrokes(working.current) }, 'liquify-stroke');
       },
       onEnd: () => {

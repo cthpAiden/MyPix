@@ -100,6 +100,26 @@ export function mapSourceToOutput(p: Point2D, c: CropParams): Point2D {
   return { x: (x - c.rect.x) / c.rect.w, y: (y - c.rect.y) / c.rect.h };
 }
 
+/**
+ * Inverse of {@link mapSourceToOutput}: map a cropped-output normalized point
+ * back to original-image normalized space. Used to convert brush strokes
+ * (captured on the visible, cropped preview) into the full-source UV space the
+ * pre-geometry pixel passes (retouch, liquify) sample. Identity when there is no
+ * crop (rect 0,0,1,1, rotate90 0), so the common path is unaffected.
+ */
+export function mapOutputToSource(p: Point2D, c: CropParams): Point2D {
+  let x = p.x * c.rect.w + c.rect.x;
+  let y = p.y * c.rect.h + c.rect.y;
+  const k = ((c.rotate90 % 4) + 4) % 4;
+  for (let i = 0; i < k; i++) {
+    const nx = y;
+    const ny = 1 - x;
+    x = nx;
+    y = ny;
+  }
+  return { x, y };
+}
+
 export function buildGeometryPass(c: CropParams, srcAspect: number): RenderPass {
   const q = c.quad;
   return {

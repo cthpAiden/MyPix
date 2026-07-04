@@ -3,10 +3,20 @@
  * engine (the only sanctioned side-effect channel). Add-or-update collapses a
  * whole scrub gesture into one undo step via a shared coalesce key.
  */
-import { defaultParamsFor } from '@/engine/editState';
+import { defaultParamsFor, defaultCrop } from '@/engine/editState';
 import type { Engine } from '@/engine';
-import type { AnyOperation, OperationParams, OperationType } from '@/engine/editState';
+import type { AnyOperation, CropParams, OperationParams, OperationType } from '@/engine/editState';
 import { newId } from './id';
+
+/**
+ * The active crop (the one the preview is framed by), or an identity crop when
+ * none is enabled. Brush tools use this to map on-screen (cropped-output) stroke
+ * coordinates back into full-source space (see mapOutputToSource).
+ */
+export function currentCrop(engine: Engine): CropParams {
+  const op = engine.getState().operations.find((o) => o.type === 'crop' && o.enabled);
+  return (op?.params as CropParams) ?? defaultCrop();
+}
 
 export function getParams<T extends OperationType>(
   engine: Engine,

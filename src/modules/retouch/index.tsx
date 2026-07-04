@@ -13,7 +13,8 @@ import { CloneIcon } from '@/ui/icons';
 import { Button, Segmented, Slider } from '@/ui/primitives';
 import { useScrubHost, type BrushHandler, type PickCallback } from '@/ui/scrub';
 import { useEditState } from '@/ui/useEngine';
-import { applyOpParam, removeOp } from '@/shared/ops';
+import { applyOpParam, currentCrop, removeOp } from '@/shared/ops';
+import { mapOutputToSource } from '@/engine/render/geometry';
 import { cloneStrokes, makeStroke, radiusFor, type RetouchMode } from './heal';
 import type { RetouchParams, RetouchStroke } from '@/engine/editState';
 import type { ToolContext, ToolModule } from '@/ui/toolModule';
@@ -47,14 +48,21 @@ function RetouchPanel({ ctx }: { ctx: ToolContext }) {
       onStart: (nx, ny) => {
         const c = cfg.current;
         if (!c.source) return;
+        // Map the paint point and the source pick from cropped-output space into
+        // full-source space (the retouch pass runs before the crop/geometry
+        // stage); scale the radius by the crop's source-width fraction.
+        const crop = currentCrop(ctx.engine);
+        const p = mapOutputToSource({ x: nx, y: ny }, crop);
+        const src = mapOutputToSource(c.source, crop);
         const cur = (ctx.engine.findOp('retouch')?.params as RetouchParams | undefined)?.strokes ?? [];
-        const stroke = makeStroke(c.mode, c.source, nx, ny, radiusFor(c.size), c.hardness);
+        const stroke = makeStroke(c.mode, src, p.x, p.y, radiusFor(c.size) * crop.rect.w, c.hardness);
         working.current = [...cloneStrokes(cur), stroke];
         applyOpParam(ctx.engine, 'retouch', { strokes: working.current }, 'retouch-stroke');
       },
       onMove: (nx, ny) => {
         if (!working.current) return;
-        working.current[working.current.length - 1].path.push({ x: nx, y: ny });
+        const p = mapOutputToSource({ x: nx, y: ny }, currentCrop(ctx.engine));
+        working.current[working.current.length - 1].path.push({ x: p.x, y: p.y });
         applyOpParam(ctx.engine, 'retouch', { strokes: cloneStrokes(working.current) }, 'retouch-stroke');
       },
       onEnd: () => {

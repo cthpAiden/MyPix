@@ -98,18 +98,21 @@ export function buildBackgroundPass(seg: SegmentationResult, params: BackgroundE
       const h = dst.height;
       const maskTex = gl.createDataTexture(mask, seg.width, seg.height);
 
+      // Two FIXED scratch targets. Each iteration reads the previous result
+      // (blurTex) into `a` (H pass), then `a` into `b` (V pass), and treats
+      // b.tex as the next input. Do NOT swap a/b: swapping made the next H pass
+      // both sample and render `b`, aliasing a texture with the bound color
+      // attachment (undefined behaviour → garbage blur). `blurTex` is only ever
+      // src or b.tex, never a.tex, so no draw reads its own render target.
       let blurTex = src;
-      let a = gl.createTarget(w, h);
-      let b = gl.createTarget(w, h);
+      const a = gl.createTarget(w, h);
+      const b = gl.createTarget(w, h);
       const hx: [number, number] = [texel[0] * spread, 0];
       const vy: [number, number] = [0, texel[1] * spread];
       for (let i = 0; i < iterations; i++) {
         gl.draw(BLUR_FRAGMENT, { u_src: { t: 'tex', v: blurTex, unit: 0 }, u_dir: { t: '2f', v: hx } }, a);
         gl.draw(BLUR_FRAGMENT, { u_src: { t: 'tex', v: a.tex, unit: 0 }, u_dir: { t: '2f', v: vy } }, b);
         blurTex = b.tex;
-        const tmp = a;
-        a = b;
-        b = tmp;
       }
 
       gl.draw(

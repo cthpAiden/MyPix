@@ -61,10 +61,15 @@ export class RenderOrchestrator {
     this.baseline = document.createElement('canvas');
     this.baseline2d = this.baseline.getContext('2d')!;
 
-    // On context loss, re-render from EditState once restored (R4).
+    // On context loss, re-render from EditState once restored (R4). The lost
+    // context invalidated ALL GL objects, so rebuild the source texture AND the
+    // ping-pong render targets (their FBOs/textures are dead); the geometry
+    // canvas is resized per render. Without recreating `ping`, pixel passes
+    // would bind dead framebuffers and the preview would stay blank.
     this.gl.onRestored(() => {
       if (this.original) {
         this.srcTex = this.gl.uploadImage(this.original.bitmap);
+        this.ping = new PingPong(this.gl, this.workW, this.workH);
         if (this.lastState) this.render(this.lastState);
       }
     });

@@ -37,7 +37,9 @@ export type UniformValue =
 export class GLContext {
   readonly gl: WebGL2RenderingContext;
   private readonly programs = new Map<string, WebGLProgram>();
-  private readonly emptyVao: WebGLVertexArrayObject;
+  // Not readonly: a real context loss invalidates the VAO, so it is recreated
+  // in the webglcontextrestored handler before any draw runs.
+  private emptyVao: WebGLVertexArrayObject;
   private lost = false;
   private readonly lostListeners = new Set<() => void>();
   private readonly restoredListeners = new Set<() => void>();
@@ -78,6 +80,10 @@ export class GLContext {
         'webglcontextrestored',
         () => {
           this.lost = false;
+          // Every GL object was invalidated by the loss. Programs rebuild
+          // lazily via program(); the shared VAO must be recreated here, before
+          // restored listeners run draw()/rebuild their own textures & targets.
+          this.emptyVao = gl.createVertexArray()!;
           this.restoredListeners.forEach((cb) => cb());
         },
         false,
