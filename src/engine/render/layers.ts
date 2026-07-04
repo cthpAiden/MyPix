@@ -143,15 +143,18 @@ function drawMakeup(g: Ctx, layer: Layer, env: LayerDrawEnv): void {
     const c = toPx({ x: b.cx, y: b.cy });
     const rx = b.rx * env.outW;
     const ry = b.ry * env.outH;
-    const grad = g.createRadialGradient(c.x, c.y, 0, c.x, c.y, Math.max(rx, ry));
+    // Map a unit circle to the rx-by-ry ellipse. (The previous max(rx,ry)
+    // circle + single-axis scale collapsed to a circle of the larger radius
+    // whenever ry > rx — i.e. every portrait — making blush too wide.)
+    g.save();
+    g.translate(c.x, c.y);
+    g.scale(Math.max(rx, 0.01), Math.max(ry, 0.01));
+    const grad = g.createRadialGradient(0, 0, 0, 0, 0, 1);
     grad.addColorStop(0, p.color);
     grad.addColorStop(1, 'transparent');
     g.fillStyle = grad;
-    g.save();
-    g.translate(c.x, c.y);
-    g.scale(1, ry / Math.max(rx, ry));
     g.beginPath();
-    g.arc(0, 0, Math.max(rx, ry), 0, Math.PI * 2);
+    g.arc(0, 0, 1, 0, Math.PI * 2);
     g.fill();
     g.restore();
   }

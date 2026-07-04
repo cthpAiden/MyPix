@@ -43,7 +43,10 @@ const serwist = new Serwist({
   fallbacks: {
     entries: [
       {
-        url: '/en',
+        // Locale-agnostic root: the '/' page (RootRedirect) client-redirects to
+        // the persisted locale, so an offline navigation to an uncached /vi/…
+        // route falls back to the user's chosen language, not a hardcoded /en.
+        url: '/',
         matcher: ({ request }) => request.destination === 'document',
       },
     ],

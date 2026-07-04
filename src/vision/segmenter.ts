@@ -60,6 +60,9 @@ function makeResult(confidenceMask: Float32Array, width: number, height: number)
     height,
     async refineEdges(strength: number): Promise<SegmentationResult> {
       const s = Math.max(0, Math.min(1, strength));
+      // Strength 0 = off: return the raw mask untouched. (feather radius 1+s*4
+      // is still 1 at s=0, which would soften the mask — not identity.)
+      if (s <= 0) return makeResult(confidenceMask, width, height);
       const feathered = featherMask(confidenceMask, width, height, 1 + s * 4);
       const refined = sharpenEdge(feathered, s);
       return makeResult(refined, width, height);
@@ -70,6 +73,7 @@ function makeResult(confidenceMask: Float32Array, width: number, height: number)
 class MediaPipeSegProvider implements SegmentationProvider {
   private segmenter: ImageSegmenterType | null = null;
   private loading: Promise<void> | null = null;
+  private disposed = false;
 
   private async ensure(): Promise<ImageSegmenterType> {
     if (this.segmenter) return this.segmenter;
@@ -78,16 +82,22 @@ class MediaPipeSegProvider implements SegmentationProvider {
         await assertModelAvailable(MODEL_URLS.segmentation);
         const fileset = await getVisionFileset();
         const { ImageSegmenter } = await import('@mediapipe/tasks-vision');
-        this.segmenter = await ImageSegmenter.createFromOptions(fileset, {
+        const seg = await ImageSegmenter.createFromOptions(fileset, {
           baseOptions: { modelAssetPath: MODEL_URLS.segmentation, delegate: VISION_DELEGATE },
           runningMode: 'IMAGE',
           outputConfidenceMasks: true,
           outputCategoryMask: false,
         });
+        if (this.disposed) {
+          seg.close();
+          return;
+        }
+        this.segmenter = seg;
       })();
     }
     await this.loading;
-    return this.segmenter!;
+    if (!this.segmenter) throw new Error('segmentation provider disposed during load');
+    return this.segmenter;
   }
 
   async segment(image: ImageBitmap): Promise<SegmentationResult> {
@@ -103,6 +113,7 @@ class MediaPipeSegProvider implements SegmentationProvider {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.segmenter?.close();
     this.segmenter = null;
     this.loading = null;

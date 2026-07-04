@@ -11,6 +11,13 @@ import { facePolygons } from '@/vision/facePolygons';
 import type { BlendMode, MakeupType, Point2D } from '@/engine/editState';
 import type { FaceLandmarks } from '@/vision/types';
 
+/**
+ * Largest feather (softRel) any makeup type uses — blush. The export band
+ * compositor sizes its band overlap from this so a feathered blob never seams
+ * at a band boundary. Keep in sync with the max softRel returned below.
+ */
+export const MAX_MAKEUP_SOFT_REL = 0.02;
+
 export interface MakeupShape {
   /** Filled polygons (normalized original space). */
   fills: Point2D[][];

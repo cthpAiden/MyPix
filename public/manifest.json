@@ -2,7 +2,7 @@
   "name": "MyPix — Beauty & Photo Editor",
   "short_name": "MyPix",
   "description": "A private, fully on-device beauty and photo editor. English & Tiếng Việt.",
-  "start_url": "/en",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

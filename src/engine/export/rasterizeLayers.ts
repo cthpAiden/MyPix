@@ -10,13 +10,13 @@
  */
 import { drawLayers, layerAssetUrls } from '@/engine/render/layers';
 import { mapSourceToOutput } from '@/engine/render/geometry';
+import { MAX_MAKEUP_SOFT_REL } from '@/engine/render/makeupShapes';
 import { preloadAssets } from '@/engine/render/layerAssets';
 import { ensureFontsLoaded } from '@/shared/fonts';
 import type { CropParams, EditState, Point2D } from '@/engine/editState';
 import type { DetectedLandmarkSet } from '@/vision/types';
 
 const LAYER_BAND = 1024;
-const PAD = 64; // overlap so feathered makeup doesn't seam at band edges
 
 function create2d(w: number, h: number): {
   canvas: HTMLCanvasElement | OffscreenCanvas;
@@ -54,10 +54,16 @@ export async function rasterizeLayers(
 
   const mapSrc = (p: Point2D) => mapSourceToOutput(p, crop);
 
+  // Band overlap must cover the widest makeup feather (a CSS blur ≈ Gaussian);
+  // ~2.5x the feather captures the tail so a blob straddling a boundary
+  // composites identically on both sides (no seam). Fixed 64px seamed on tall
+  // exports where the blush feather (0.02·minDim) exceeded it.
+  const pad = Math.max(64, Math.ceil(MAX_MAKEUP_SOFT_REL * Math.min(width, height) * 2.5));
+
   for (let y0 = 0; y0 < height; y0 += LAYER_BAND) {
     const bandH = Math.min(LAYER_BAND, height - y0);
-    const drawY0 = Math.max(0, y0 - PAD);
-    const drawY1 = Math.min(height, y0 + bandH + PAD);
+    const drawY0 = Math.max(0, y0 - pad);
+    const drawY1 = Math.min(height, y0 + bandH + pad);
     const ch = drawY1 - drawY0;
 
     const { ctx } = create2d(width, ch);

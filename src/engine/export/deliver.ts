@@ -6,17 +6,20 @@ export async function deliver(
   blob: Blob,
   fileName: string,
   mode: 'share' | 'download',
-): Promise<'shared' | 'downloaded'> {
+): Promise<'shared' | 'downloaded' | 'cancelled'> {
   if (mode === 'share' && typeof navigator !== 'undefined' && 'share' in navigator) {
-    try {
-      const file = new File([blob], fileName, { type: blob.type });
-      const canShare = navigator.canShare?.({ files: [file] }) ?? true;
-      if (canShare) {
+    const file = new File([blob], fileName, { type: blob.type });
+    const canShare = navigator.canShare?.({ files: [file] }) ?? true;
+    if (canShare) {
+      try {
         await navigator.share({ files: [file] });
         return 'shared';
+      } catch (err) {
+        // A user who dismisses the share sheet rejects with AbortError — that is
+        // an explicit "no", so do NOT silently download the file behind their
+        // back. Only a genuine failure falls through to the download fallback.
+        if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled';
       }
-    } catch {
-      // User cancelled or share unavailable → fall through to download.
     }
   }
   downloadBlob(blob, fileName);

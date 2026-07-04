@@ -54,6 +54,13 @@ export function ExportSheet({ engine, onClose }: { engine: Engine; onClose: () =
           delivery,
           onProgress: (done, total) => setProgress(total ? done / total : 0),
         });
+        if (result.delivered === 'cancelled') {
+          // User dismissed the share sheet — reset so they can choose again;
+          // don't download or claim success.
+          setProgress(null);
+          setMessage(null);
+          return;
+        }
         setProgress(1);
         setMessage(
           result.delivered === 'shared'

@@ -43,5 +43,5 @@ export interface ExportResult {
   width: number;
   height: number;
   fileName: string;
-  delivered: 'shared' | 'downloaded';
+  delivered: 'shared' | 'downloaded' | 'cancelled';
 }

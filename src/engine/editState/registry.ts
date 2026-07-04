@@ -368,8 +368,11 @@ export function clampParams<T extends OperationType>(
       const rect = p.rect as CropParams['rect'];
       rect.x = clamp(rect.x, 0, 1);
       rect.y = clamp(rect.y, 0, 1);
-      rect.w = clamp(rect.w, 0.02, 1 - Math.min(rect.x, 0.98));
-      rect.h = clamp(rect.h, 0.02, 1 - Math.min(rect.y, 0.98));
+      // Upper bound is 1 - x (never x + w > 1). Using Math.min(x, 0.98) let a
+      // rect with x > 0.98 keep w = 0.02, pushing x + w past 1 and sampling
+      // outside the source (edge-pixel smear).
+      rect.w = clamp(rect.w, 0.02, 1 - rect.x);
+      rect.h = clamp(rect.h, 0.02, 1 - rect.y);
       break;
     }
     default:

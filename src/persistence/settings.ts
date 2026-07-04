@@ -19,11 +19,17 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function patchSettings(patch: Partial<Settings>): Promise<void> {
-  const current = await getSettings();
-  const next: Settings = { ...current, ...patch };
   await guardedWrite(async () => {
     const db = await getDB();
-    await db.put('settings', next, SETTINGS_KEY);
+    // Read-merge-write inside ONE readwrite transaction. IndexedDB serializes
+    // readwrite transactions on a store, so two concurrent patches of different
+    // fields (e.g. unlock + sound toggle) no longer clobber each other — the
+    // second re-reads the first's committed value before merging.
+    const tx = db.transaction('settings', 'readwrite');
+    const stored = await tx.store.get(SETTINGS_KEY);
+    const next: Settings = { ...defaultSettings(), ...stored, ...patch };
+    await tx.store.put(next, SETTINGS_KEY);
+    await tx.done;
   });
   if (patch.locale) mirrorLocale(patch.locale);
 }

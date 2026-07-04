@@ -74,8 +74,15 @@ export class LandmarkCache {
 
       let run = this.inflight.get(kind);
       if (!run) {
-        run = this.detect(kind, bitmap, target).finally(() => this.inflight.delete(kind));
-        this.inflight.set(kind, run);
+        // Only clear the map entry if it is still THIS run: a reset() (crop /
+        // project change) may have replaced the set and started a fresh
+        // detection under the same kind while this one was still in flight;
+        // a bare delete(kind) would evict that newer entry.
+        const started: Promise<void> = this.detect(kind, bitmap, target).finally(() => {
+          if (this.inflight.get(kind) === started) this.inflight.delete(kind);
+        });
+        run = started;
+        this.inflight.set(kind, started);
       }
       runs.push(run);
     }

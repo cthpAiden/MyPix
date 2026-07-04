@@ -43,10 +43,15 @@ export function reduce(state: EditState, action: EditAction): EditState {
     }
 
     case 'op/toggle': {
-      const operations = state.operations.map((op) =>
-        op.id === action.id ? { ...op, enabled: action.enabled } : op,
-      );
-      return withOps(state, operations);
+      let changed = false;
+      const operations = state.operations.map((op) => {
+        if (op.id !== action.id || op.enabled === action.enabled) return op;
+        changed = true;
+        return { ...op, enabled: action.enabled };
+      });
+      // Return the same state on a no-op (unknown id or already at that value)
+      // so the engine doesn't record a dead undo step.
+      return changed ? withOps(state, operations) : state;
     }
 
     case 'op/remove':
@@ -58,11 +63,16 @@ export function reduce(state: EditState, action: EditAction): EditState {
     case 'layer/add':
       return withLayers(state, [...state.layers, action.layer]);
 
-    case 'layer/update':
-      return withLayers(
-        state,
-        state.layers.map((l) => (l.id === action.id ? { ...l, ...action.patch } : l)),
-      );
+    case 'layer/update': {
+      let changed = false;
+      const layers = state.layers.map((l) => {
+        if (l.id !== action.id) return l;
+        changed = true;
+        return { ...l, ...action.patch };
+      });
+      // No matching layer → no change, so don't record a dead undo step.
+      return changed ? withLayers(state, layers) : state;
+    }
 
     case 'layer/remove':
       return withLayers(

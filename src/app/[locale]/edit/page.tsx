@@ -144,8 +144,12 @@ function Editor({ engine }: { engine: Engine }) {
 
   const photoHandlers = {
     onPointerDown: (e: React.PointerEvent) => {
-      if (pickCb) setPickPos({ x: e.clientX, y: e.clientY });
-      else if (brushCb) {
+      if (pickCb) {
+        setPickPos({ x: e.clientX, y: e.clientY });
+        // Capture so a pick drag that leaves the canvas (mouse/pen) still
+        // delivers move/up here and completes — mirrors the brush branch.
+        (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+      } else if (brushCb) {
         brushingRef.current = true;
         const { nx, ny } = toNorm(e.clientX, e.clientY);
         brushCb.onStart(nx, ny);

@@ -19,6 +19,7 @@ const MAX_FACES = 5;
 class MediaPipeFaceProvider implements FaceLandmarkProvider {
   private landmarker: FaceLandmarkerType | null = null;
   private loading: Promise<void> | null = null;
+  private disposed = false;
 
   private async ensure(): Promise<FaceLandmarkerType> {
     if (this.landmarker) return this.landmarker;
@@ -27,15 +28,23 @@ class MediaPipeFaceProvider implements FaceLandmarkProvider {
         await assertModelAvailable(MODEL_URLS.face);
         const fileset = await getVisionFileset();
         const { FaceLandmarker } = await import('@mediapipe/tasks-vision');
-        this.landmarker = await FaceLandmarker.createFromOptions(fileset, {
+        const lm = await FaceLandmarker.createFromOptions(fileset, {
           baseOptions: { modelAssetPath: MODEL_URLS.face, delegate: VISION_DELEGATE },
           runningMode: 'IMAGE',
           numFaces: MAX_FACES,
         });
+        // dispose() may have run while the model was loading; close the freshly
+        // created model instead of assigning it to an orphaned provider (leak).
+        if (this.disposed) {
+          lm.close();
+          return;
+        }
+        this.landmarker = lm;
       })();
     }
     await this.loading;
-    return this.landmarker!;
+    if (!this.landmarker) throw new Error('face provider disposed during load');
+    return this.landmarker;
   }
 
   async detect(image: ImageBitmap): Promise<FaceLandmarks[]> {
@@ -57,6 +66,7 @@ class MediaPipeFaceProvider implements FaceLandmarkProvider {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.landmarker?.close();
     this.landmarker = null;
     this.loading = null;

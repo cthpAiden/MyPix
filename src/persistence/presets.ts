@@ -9,6 +9,15 @@ import { newId } from '@/shared/id';
 import type { AnyOperation } from '@/engine/editState';
 import type { Preset } from './types';
 
+/**
+ * Next free sort order. Deriving from the max (not `existing.length`) keeps it
+ * collision-free after a non-last preset is deleted — deletePreset does not
+ * renumber survivors, so length can be < maxSortOrder+1.
+ */
+function nextSortOrder(existing: Preset[]): number {
+  return existing.reduce((m, p) => Math.max(m, p.sortOrder + 1), 0);
+}
+
 export async function listPresets(): Promise<Preset[]> {
   try {
     const db = await getDB();
@@ -28,7 +37,7 @@ export async function savePreset(name: string, ops: AnyOperation[]): Promise<Pre
     name: name.trim() || 'Recipe',
     schemaVersion: CURRENT_SCHEMA_VERSION,
     operations: structuredClone(portable),
-    sortOrder: existing.length,
+    sortOrder: nextSortOrder(existing),
     createdAt: Date.now(),
   };
   const outcome = await guardedWrite(async () => {
@@ -80,7 +89,7 @@ export async function importPresetCode(code: string): Promise<Preset> {
     name: payload.name,
     schemaVersion: CURRENT_SCHEMA_VERSION,
     operations: payload.ops,
-    sortOrder: existing.length,
+    sortOrder: nextSortOrder(existing),
     createdAt: Date.now(),
   };
   await guardedWrite(async () => {

@@ -12,6 +12,7 @@ import type { PoseLandmarkProvider, PoseLandmarks, PosePoint } from './types';
 class MediaPipePoseProvider implements PoseLandmarkProvider {
   private landmarker: PoseLandmarkerType | null = null;
   private loading: Promise<void> | null = null;
+  private disposed = false;
 
   private async ensure(): Promise<PoseLandmarkerType> {
     if (this.landmarker) return this.landmarker;
@@ -20,15 +21,21 @@ class MediaPipePoseProvider implements PoseLandmarkProvider {
         await assertModelAvailable(MODEL_URLS.pose);
         const fileset = await getVisionFileset();
         const { PoseLandmarker } = await import('@mediapipe/tasks-vision');
-        this.landmarker = await PoseLandmarker.createFromOptions(fileset, {
+        const lm = await PoseLandmarker.createFromOptions(fileset, {
           baseOptions: { modelAssetPath: MODEL_URLS.pose, delegate: VISION_DELEGATE },
           runningMode: 'IMAGE',
           numPoses: 1,
         });
+        if (this.disposed) {
+          lm.close();
+          return;
+        }
+        this.landmarker = lm;
       })();
     }
     await this.loading;
-    return this.landmarker!;
+    if (!this.landmarker) throw new Error('pose provider disposed during load');
+    return this.landmarker;
   }
 
   async detect(image: ImageBitmap): Promise<PoseLandmarks | null> {
@@ -45,6 +52,7 @@ class MediaPipePoseProvider implements PoseLandmarkProvider {
   }
 
   dispose(): void {
+    this.disposed = true;
     this.landmarker?.close();
     this.landmarker = null;
     this.loading = null;
