@@ -13,6 +13,13 @@ export type Detent = 'peek' | 'half' | 'full';
 /** Visible fraction of the viewport at each detent. */
 const FRACTION: Record<Detent, number> = { peek: 0.24, half: 0.52, full: 0.9 };
 const SHEET_FRACTION = FRACTION.full;
+
+/**
+ * Fraction of the viewport the sheet always covers, even fully collapsed. The
+ * photo canvas must reserve this much space (see edit/page.tsx) so the sheet
+ * never hides part of the photo — only the panel content above it.
+ */
+export const SHEET_PEEK_FRACTION = FRACTION.peek;
 const ORDER: Detent[] = ['peek', 'half', 'full'];
 
 export function ToolSheet({

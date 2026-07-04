@@ -13,7 +13,7 @@ import { getEngine, type Engine } from '@/engine';
 import { useEditState } from '@/ui/useEngine';
 import { useParamScrub } from '@/ui/useParamScrub';
 import { ScrubContext, type BrushHandler, type PickCallback, type ScrubConfig } from '@/ui/scrub';
-import { ToolSheet, type Detent } from '@/ui/ToolSheet';
+import { ToolSheet, SHEET_PEEK_FRACTION, type Detent } from '@/ui/ToolSheet';
 import { Toolbar } from '@/ui/editor/Toolbar';
 import { ExportSheet } from '@/ui/editor/ExportSheet';
 import { Compare } from '@/ui/Compare';
@@ -220,7 +220,7 @@ function Editor({ engine }: { engine: Engine }) {
           ref={canvasHostRef}
           {...photoHandlers}
           className="relative flex min-h-0 flex-1 select-none items-center justify-center overflow-hidden px-2"
-          style={{ touchAction: 'none' }}
+          style={{ touchAction: 'none', paddingBottom: `${SHEET_PEEK_FRACTION * 100}dvh` }}
         >
           {scrub.isScrubbing && (
             <div className="pointer-events-none absolute inset-x-0 top-6 flex justify-center">
